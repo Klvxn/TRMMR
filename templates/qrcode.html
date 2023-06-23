@@ -14,18 +14,18 @@
           <img src="/static/clear.png" alt="" height="20" width="20">
         </button>
         <script>
-        function pasteFromClipboard() {
-          navigator.clipboard.readText()
-            .then(text => {
-              document.getElementById("urlInput").value = text;
-            })
-            .catch(error => {
-              console.error('Failed to paste from clipboard: ', error);
-            });
-        }
-        function clearInput() {
-          document.getElementById("urlInput").value = "";
-        }
+          function pasteFromClipboard() {
+            navigator.clipboard.readText()
+              .then(text => {
+                document.getElementById("urlInput").value = text;
+              })
+              .catch(error => {
+                console.error('Failed to paste from clipboard: ', error);
+              });
+          }
+          function clearInput() {
+            document.getElementById("urlInput").value = "";
+          }
         </script>
         <button type="submit" class="mt-4">Generate</button>
       </form>
