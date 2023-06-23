@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	{% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul>
+      {% for message in messages %}
+        <li> {{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+	{% endwith %}
+	<div class="auth-form">
+	  <h4 class="text-center my-5">Welcome back</h4>
+	  <form action="" method="post">
+	    {{ form.csrf_token }}
+	    {{ form.email_address(placeholder="Email Address") }} <br>
+	    {% if form.email_address.errors %} {{ form.email_address.errors }} <br><br> {% endif %}
+	    {{ form.password(placeholder="Password") }} <br>
+	    {% if form.password.errors %} {{ form.password.errors }} {% endif %}
+	    <button>Log In</button>
+	    <hr>
+	    Don't have an account? <a href="/create-new-account/">Create account</a>
+	  </form>
+	</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="auth-form">
+    <h4 class="text-center my-5">Create a New Account</h4>
+    <form action="" method="post">
+      {{ form.csrf_token }}
+      {{ form.email_address(placeholder="Email address") }} <br>
+      {% if form.email_address.errors %} {{ form.email_address.errors }} <br><br>{% endif %}
+      {{ form.first_name(placeholder="First Name") }} <br>
+      {{ form.last_name(placeholder="Last Name") }} <br>
+      {{ form.password(placeholder="Password") }} <br>
+      {% if form.password.errors %} {{ form.password.errors }} <br><br> {% endif %}
+      <button>Sign Up</button>
+      <hr>
+      Already have an account? <a href="/log-in/">Log In</a>
+    </form>
+  </div>
+{% endblock %}

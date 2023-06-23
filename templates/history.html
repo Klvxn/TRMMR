@@ -1,0 +1,21 @@
+{% extends 'home.html' %}
+
+
+{% block main %}
+    <div class="mx-5">
+        <h4>Your TRMMR History</h4>
+        {% for link in links %}
+            <div class="my-5">
+                Original url: <a href="{{ link.url }}">{{ link.url[0:70] }}...</a><br>
+                TRMMD url: <a href="{{ link.shortened_url }}">{{ link.shortened_url }}</a><br>
+                date created: <span>{{ link.created_at }}</span>
+            </div>
+        {% endfor %}
+
+        {% if links %}
+        <form action="" method="post">
+            <button>Clear history</button>
+        </form>
+        {% endif %}
+     </div>
+{% endblock %}
