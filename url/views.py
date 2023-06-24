@@ -39,6 +39,7 @@ def shorten_url():
 @limiter.limit("10/minute")
 def redirect_to_org_url(short_url):
     url = Link.query.filter_by(short_url=short_url).first_or_404()
+    url.total_clicks += 1
     return redirect(url.org_url)
 
 
@@ -80,6 +81,7 @@ def generate_qrcode():
 def user_history():
     context = {"links": current_user.links}
 
+    # Clear URL history
     if request.method == "POST":
         for link in current_user.links:
             db.session.delete(link)
