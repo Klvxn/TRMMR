@@ -1,30 +1,45 @@
-import qrcode
+import io
 
-from flask import Blueprint, render_template, request, redirect, make_response
+import qrcode
+from flask import Blueprint, render_template, request, redirect, make_response, send_file
 from flask_login import current_user, login_required
-from pyshorteners.shorteners import clckru
 
 from database import db
+from util import cache, limiter, generate_short_url, encode_qrcode_image
 from .models import Link
 
 links_bp = Blueprint("links", __name__)
 
 
 @links_bp.route("/", methods=["GET", "POST"])
+@limiter.limit("10/minute")
 def shorten_url():
     context = {"current_user": current_user}
 
     if request.method == "POST":
-        url = request.form.get("urlInput")
-        shortened_url = clckru.Shortener().short(url)
-        context["shortened_url"] = shortened_url
+        long_url = request.form.get("urlInput")
 
-        if current_user.is_authenticated:
-            link = Link(url=url, shortened_url=shortened_url, total_clicks=3, user_id=current_user.id)
-            db.session.add(link)
-            db.session.commit()
+        url_exist = Link.query.filter_by(org_url=long_url).first()
+        if url_exist:
+            short_url = url_exist.short_url
+        else:
+            short_url = generate_short_url()
+
+        user_id = current_user.id if current_user.is_authenticated else 0
+        link = Link(org_url=long_url, short_url=short_url, user_id=user_id)
+        db.session.add(link)
+        db.session.commit()
+
+        context["short_url"] = short_url
 
     return render_template("home.html", **context)
+
+
+@links_bp.route("/<short_url>", methods=["GET"])
+@limiter.limit("10/minute")
+def redirect_to_org_url(short_url):
+    url = Link.query.filter_by(short_url=short_url).first_or_404()
+    return redirect(url.org_url)
 
 
 @links_bp.route("/generate-qrcode", methods=["GET", "POST"])
@@ -35,21 +50,32 @@ def generate_qrcode():
         url_arg = request.args.get("url")
 
         if url_arg:
-            print("yes")
-            qrcode.make(url_arg).save("static/code.png")
-            return make_response("<img src='static/code.png' alt=''>")
+            encoded_image = encode_qrcode_image(url_arg)
+            return make_response(f"""
+                <img src='data:image/png;base64,{encoded_image}' alt='' height=330 width=330>
+            """)
 
         if url_form:
-            qr = qrcode.make(url_form)
-            short = clckru.Shortener().short(url_form).strip("https://clck.ru")
-            image_url = f"static/{short}_image.png"
-            qr.save(image_url)
-            return make_response(f"<img src='{image_url}' alt='' height=330 width=330>")
+            encoded_image = encode_qrcode_image(url_form)
+            return make_response(f"""
+                <p><img src='data:image/png;base64,{encoded_image}' alt='' height=330 width=330></p>
+                <form action="" method="post">
+                    <button>Download</button>
+                </form>
+            """)
+
+        # Download QR code image
+        qr_code = qrcode.make(url_form)
+        image_stream = io.BytesIO()
+        qr_code.save(image_stream, "PNG")
+        image_stream.seek(0)
+        return send_file(image_stream, download_name="qr_code.png", as_attachment=True)
 
     return render_template("qrcode.html")
 
 
 @links_bp.route("/history", methods=["GET", "POST"])
+@cache.cached(timeout=50)
 @login_required
 def user_history():
     context = {"links": current_user.links}

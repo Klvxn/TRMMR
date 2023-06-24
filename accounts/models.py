@@ -32,5 +32,5 @@ class User(db.Model, UserMixin):
 
     @classmethod
     def get_user_by_email(cls, email):
-        user = User.query.filter(User.email_address == email).first()
+        user = cls.query.filter_by(email_address=email).first()
         return user

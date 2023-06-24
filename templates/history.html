@@ -5,8 +5,8 @@
     <h4>Your TRMMR History</h4>
     {% for link in links %}
       <div class="my-5">
-        Original url: <a href="{{ link.url }}">{{ link.url[0:70] }}...</a><br>
-        TRMMD url: <a href="{{ link.shortened_url }}">{{ link.shortened_url }}</a><br>
+        Original url: <a href="{{ link.org_url }}">{{ link.org_url[0:70] }}...</a><br>
+        TRMMD url: <a href="{{ link.short_url }}">{{ link.short_url }}</a><br>
         date created: <span>{{ link.created_at }}</span>
       </div>
     {% endfor %}
