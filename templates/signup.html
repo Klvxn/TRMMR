@@ -6,11 +6,19 @@
     <form action="" method="post">
       {{ form.csrf_token }}
       {{ form.email_address(placeholder="Email address") }} <br>
-      {% if form.email_address.errors %} {{ form.email_address.errors }} <br><br>{% endif %}
+      {% if form.email_address.errors %}
+        {% for error in form.email_address.errors %}
+          <p class="form-error">{{ error }} </p>
+        {% endfor %}
+      {% endif %}
       {{ form.first_name(placeholder="First Name") }} <br>
       {{ form.last_name(placeholder="Last Name") }} <br>
       {{ form.password(placeholder="Password") }} <br>
-      {% if form.password.errors %} {{ form.password.errors }} <br><br> {% endif %}
+      {% if form.password.errors %}
+        {% for error in form.email_address.errors %}
+          <p class="form-error">{{ error }} </p>
+        {% endfor %}
+      {% endif %}
       <button>Sign Up</button>
       <hr>
       Already have an account? <a href="/log-in/">Log In</a>

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% with messages = get_flashed_messages() %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <ul>
-      {% for message in messages %}
-        <li> {{ message }}</li>
+      {% for category, message in messages %}
+        <li class="flash-msg" data-category="{{ category }}"> {{ message }}</li>
       {% endfor %}
       </ul>
     {% endif %}
@@ -15,9 +15,17 @@
     <form action="" method="post">
       {{ form.csrf_token }}
       {{ form.email_address(placeholder="Email Address") }} <br>
-      {% if form.email_address.errors %} {{ form.email_address.errors }} <br><br> {% endif %}
+      {% if form.email_address.errors %}
+        {% for error in form.email_address.errors %}
+          <p class="form-error">{{ error }} </p>
+        {% endfor %}
+      {% endif %}
       {{ form.password(placeholder="Password") }} <br>
-      {% if form.password.errors %} {{ form.password.errors }} {% endif %}
+      {% if form.password.errors %}
+        {% for error in form.password.errors %}
+          <p class="form-error">{{ error }} </p>
+        {% endfor %}
+      {% endif %}
       <button>Log In</button>
       <hr>
       Don't have an account? <a href="/create-new-account/">Create account</a>

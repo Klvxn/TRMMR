@@ -71,7 +71,7 @@ def account_settings():
         db.session.commit()
         response = make_response()
         response.headers["HX-Location"] = "/account-settings"
-        flash("Update was successfull")
+        flash("Update was successful", "success")
         return response
 
     if request.method == "DELETE":

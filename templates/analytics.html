@@ -1,0 +1,23 @@
+{% extends "home.html" %}
+
+{% block main %}
+  <div class="m-auto">
+    <div class="text-center analytics">
+      <h4 >Analytics</h4>
+      <div>
+        <p class="mb-5"><code>
+          <a href="{{ url.short_url }}" class="justlink ">{{ url.short_url }}</a>
+        </code></p>
+        <p class="text-small">URL: <a class="justlink">{{ url.org_url[:50] }}...</a></p>
+        <p class="text-muted">Date Created: {{ url.created_at.strftime('%Y/%b/%d %H:%M:%S')  }}</p>
+        <p class="text-muted">Last Visited: {{ url.last_visited.strftime('%Y/%b/%d %H:%M:%S') }}</p>
+        <p class="circle shadow">{{ url.get_total_clicks() }} Clicks </p>
+{#        <div class="float-start m-5"></div>#}
+        <figure>
+          <img src="/static/images/chart.png" alt="Chart" height="380" width="540">
+          <figcaption><h5>Most Used Platforms</h5></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -11,7 +11,6 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String, nullable=False)
     email_address = db.Column(db.String, nullable=False, unique=True)
     password_hash = db.Column(db.String, nullable=False)
-
     links = db.relationship("Link", backref="user_links", lazy=True)
 
     def __init__(self, first_name, last_name, email, password):

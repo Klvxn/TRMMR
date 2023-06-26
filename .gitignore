@@ -3,3 +3,4 @@ venv
 TRMMRDB
 __pycache__
 *.pyc
+cache

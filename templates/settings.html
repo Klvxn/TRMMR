@@ -6,7 +6,11 @@
     <form action="" hx-post="/account-settings" method="post">
       {{ form.csrf_token }}
       {{ form.email_address(placeholder="Email address", value=current_user.email_address) }} <br>
-      {% if form.email_address.errors %} {{ form.email_address.errors }} {% endif %}
+      {% if form.email_address.errors %}
+        {% for error in form.email_address.errors %}
+          <p class="form-error">{{ error }} </p>
+        {% endfor %}
+      {% endif %}
       {{ form.first_name(placeholder="First Name", value=current_user.first_name) }} <br>
       {{ form.last_name(placeholder="Last Name", value=current_user.last_name)}} <br>
       <button type="submit">Update</button>
