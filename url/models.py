@@ -5,7 +5,7 @@ from database import db
 class Link(db.Model):
 
     id = db.Column(db.Integer, nullable=False, primary_key=True)
-    title = db.Column(db.String, nullable=True)
+    # title = db.Column(db.String, nullable=True)
     org_url = db.Column(db.String, nullable=False)
     short_url = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
@@ -21,7 +21,7 @@ class Click(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     device = db.Column(db.String(100))
-    clicked_at = db.Column(db.DateTime, default=datetime.now)
+    clicked_at = db.Column(db.Date, default=datetime.now)
     link_id = db.Column(db.Integer, db.ForeignKey("link.id"))
 
     def __repr__(self):

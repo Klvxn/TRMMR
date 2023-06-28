@@ -152,15 +152,17 @@ code {
 
 .circle {
   border-radius: 10rem;
-  width: fit-content;
   padding: 2rem;
-  /*float: right;*/
-  margin-top: 3rem;
-  margin-right: 5rem;
   background-color: cornflowerblue;
   color: white;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+}
+
+.my-card {
+  text-align: center;
+  width: fit-content;
+  margin: 3rem 0;
 }
 
 .history, .analytics {
@@ -170,4 +172,10 @@ code {
 .justlink {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: normal;
+}
+
+.last-short {
+  margin-top: 10rem;
+  text-align: center;
+  /*border: 1px lightgray solid;*/
 }

@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 BASE_PATH = Path(__file__).resolve().parent
 DATABASE_PATH = os.path.join(BASE_PATH, "database")
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}/TRMMRDB"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}/TRMMRkq_ioDB"
 app.config["SECRET_KEY"] = "safe-space"
 app.config["CACHE_TYPE"] = "FileSystemCache"
 app.config["CACHE_THRESHOLD"] = 100

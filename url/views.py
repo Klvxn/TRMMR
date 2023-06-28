@@ -1,3 +1,4 @@
+import base64
 import io
 from datetime import datetime
 
@@ -34,6 +35,10 @@ def shorten_url():
 
         context["short_url"] = short_url
 
+    if current_user.is_authenticated:
+        last_shortened = Link.query.filter_by(user_id=current_user.id).all()[0]
+        context["last_shortened"] = last_shortened
+
     return render_template("home.html", **context)
 
 
@@ -44,7 +49,7 @@ def redirect_to_org_url(unique_id):
     short_url = request.host_url + unique_id
     url = Link.query.filter_by(short_url=short_url).first_or_404()
     url.last_visited = datetime.now()
-    device = request.headers.get("Sec-Ch-Ua-Platform").strip("\"")
+    device = request.headers.get("Sec-Ch-Ua-Platform", "Others").strip("\"")
     clicked_at = datetime.now()
     click = Click(device=device, clicked_at=clicked_at, link_id=url.id)
     click.save()
@@ -106,29 +111,80 @@ def user_history():
 def url_analytics(unique_id):
     short_url = request.host_url + unique_id
     url = Link.query.filter_by(short_url=short_url).first_or_404()
-
-    devices = {
-        "Windows": 0,
-        "Mac": 0,
-        "Linux": 0,
-        "Android": 0,
-        "iOS": 0,
-        "Others": 0,
-        "None": 1
-    }
-    for click, device in zip(url.clicks, devices.keys()):
-        if click.device == device:
-            devices[device] += 1
-
-    labels = [device for device in devices.keys()]
-    sizes = [value for value in devices.values()]
-    fig, ax = plt.subplots()
-    ax.pie(sizes, autopct='%d%%', startangle=90)
-    ax.axis('equal')
-    plt.legend(labels, title="Platforms", loc="center left", bbox_to_anchor=(0.84, 0.5),
-               handlelength=1, ncol=1, borderpad=1, handletextpad=1)
-    chart_file = 'static/images/chart.png'
-    plt.savefig(chart_file)
-
     context = {"url": url, "clicks": url.clicks}
+
+    if url.get_total_clicks():
+        devices = {
+            "Windows": 0,
+            "Mac": 0,
+            "Linux": 0,
+            "Android": 0,
+            "iOS": 0,
+            "Others": 0
+        }
+
+        for click in url.clicks:
+            for k, v in devices.items():
+                if click.device == k:
+                    devices[k] += 1
+
+        # Bar chart for most used platforms(OS)
+        plt.figure()
+        labels = [device for device in devices.keys()]
+        sizes = [value for value in devices.values()]
+        plt.pie(sizes, autopct='%1.1f%%', startangle=90)
+        plt.title("Most Used Platforms", loc="center", fontsize=20)
+        plt.subplots_adjust(bottom=0)
+        plt.legend(labels, title="Platforms", loc="center left", bbox_to_anchor=(0.9, 0.5),
+                   handlelength=1, ncol=1, borderpad=1, handletextpad=1)
+
+        buffer1 = io.BytesIO()
+        plt.savefig(buffer1, format="png")
+        buffer1.seek(0)
+        graph1 = base64.b64encode(buffer1.getvalue()).decode()
+
+        target_dates = set()
+        for click in url.clicks:
+            target_dates.add(click.clicked_at)
+
+        clicks = Click.query.filter_by(link_id=url.id)
+        click_count = {}
+
+        for date in target_dates:
+            click_day = clicks.filter_by(clicked_at=date).all()
+            try:
+                click_count[date] += len(click_day)
+            except KeyError:
+                click_count[date] = len(click_day)
+
+        # Pie chart for clicks per day
+        dates = [str(date) for date in click_count.keys()]
+        values = [value for value in click_count.values()]
+
+        plt.figure()
+        plt.bar(x=dates, height=values, width=0.2, color="lime")
+        plt.xlabel("Date", fontsize=12)
+        plt.xticks(rotation=30)
+        plt.ylabel("Clicks", fontsize=12)
+        plt.title("Clicks/Day Count", fontsize=20, pad=40)
+        plt.subplots_adjust(bottom=0.2, top=0.8)
+
+        buffer2 = io.BytesIO()
+        plt.savefig(buffer2, format="png")
+        buffer2.seek(0)
+        graph2 = base64.b64encode(buffer2.getvalue()).decode()
+
+        # Get the day with most clicks
+        zipped = zip(dates, values)
+        max_clicks_day = list(max(dict(zipped).items(), key=lambda x: x[1]))
+        new_format = datetime.strptime(max_clicks_day[0], "%Y-%m-%d")
+        max_clicks_day[0] = new_format.strftime("%b %d, %Y")
+
+        context.update({
+            "platform_chart": graph1,
+            "click_chart": graph2,
+            "click_count": click_count,
+            "max_clicks_day": max_clicks_day
+        })
+
     return render_template("analytics.html", **context)
