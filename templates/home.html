@@ -35,7 +35,7 @@
     {% block main %}
       <div class="text-center mx-5">
         <h4>TRM URL</h4>
-        <form action="" method="post" class="form-control m-4">
+        <form action="" method="post" class="form-control m-4 py-2">
         <input class="d-inline" type="url" name="long_url" id="URLInput" required placeholder="Enter a long URL" size="60">
           <button class="icon" onclick="pasteFromClipboard()">
             <img src="/static/images/paste-preview.png" alt="" height="20" width="20">
@@ -43,7 +43,8 @@
           <button class="icon" onclick="clearInput()">
             <img src="/static/images/clear.png" alt="" height="20" width="20">
           </button>
-{#          <input class="my-4 mx-4" type="url" name="custom_url" id="custom_url" placeholder="Add custom URL" size="40">#}
+          <input class="my-4 mx-4" type="text" name="custom_half" id="custom_url"
+                 placeholder="Add custom half e.g. trmmr.io/your-custom-half" size="60">
           <button type="submit" class="mt-4">
             <img src="/static/images/logo-2.png" alt="" width="30" height="24">
             TRM
@@ -63,7 +64,7 @@
               <h5>Last TRMMD URL</h5>
               <div class="m-auto py-3">
                 <b>TRMMD:</b> <a href="{{ last_shortened.short_url }}">{{ last_shortened.short_url }}</a><br>
-                Original URL: <a href="{{ last_shortened.org_url }}" class="justlink">{{ last_shortened.org_url[0:50] }}...</a><br>
+                Original URL: <a href="{{ last_shortened.org_url }}" class="justlink text-small">{{ last_shortened.org_url[0:70] }}...</a><br>
                 <span class="text-muted">{{ last_shortened.get_total_clicks() }} CLicks</span><br>
                 <a class="m-1 p-1 float-end" href="{{ url_for('url.url_analytics', unique_id=last_shortened.short_url.split('/')[-1]) }}">
                   View analytics ->

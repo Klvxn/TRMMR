@@ -21,10 +21,13 @@ def shorten_url():
 
     if request.method == "POST":
         long_url = request.form.get("long_url")
-        # custom_url = request.form.get("custom_url")
+        custom_url = request.form.get("custom_half").replace(" ", "-")
+
         url_exist = Link.query.filter_by(org_url=long_url).first()
         if url_exist:
             short_url = url_exist.short_url
+        elif custom_url:
+            short_url = request.host_url + custom_url
         else:
             short_url = generate_short_url()
 
@@ -36,7 +39,7 @@ def shorten_url():
         context["short_url"] = short_url
 
     if current_user.is_authenticated:
-        last_shortened = Link.query.filter_by(user_id=current_user.id).all()[0]
+        last_shortened = Link.query.filter_by(user_id=current_user.id).order_by(Link.created_at.desc()).first()
         context["last_shortened"] = last_shortened
 
     return render_template("home.html", **context)

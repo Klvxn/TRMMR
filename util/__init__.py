@@ -1,13 +1,16 @@
 import base64, io
 
 import nanoid, qrcode
+import requests
 from flask import request
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_mail import Mail
 
 cache = Cache()
 limiter = Limiter(get_remote_address)
+mail = Mail()
 
 
 def generate_short_url():

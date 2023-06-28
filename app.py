@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 from flask import Flask, render_template
 from flask_login import LoginManager
 
@@ -8,27 +5,15 @@ from accounts.models import User
 from accounts.views import accounts_bp
 from database import db
 from url.views import url_bp
-from util import cache, limiter
-
+from util import cache, limiter, mail
 
 app = Flask(__name__)
-
-BASE_PATH = Path(__file__).resolve().parent
-DATABASE_PATH = os.path.join(BASE_PATH, "database")
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}/TRMMRkq_ioDB"
-app.config["SECRET_KEY"] = "safe-space"
-app.config["CACHE_TYPE"] = "FileSystemCache"
-app.config["CACHE_THRESHOLD"] = 100
-app.config["CACHE_DIR"] = os.path.join(BASE_PATH, "cache/app")
-app.config["CACHE_DEFAULT_TIMEOUT"] = 60
-app.config["RATELIMIT_HEADERS_ENABLED"] = True
-app.config["ENV"] = "development"
-app.config["DEBUG"] = True
-app.config["PREFERRED_URL_SCHEME"] = "https"
+app.config.from_object("config")
 
 cache.init_app(app)
 limiter.init_app(app)
 db.init_app(app)
+mail.init_app(app)
 
 with app.app_context():
     db.create_all()

@@ -1,8 +1,12 @@
-from flask import Blueprint, flash, redirect, render_template, request, make_response
+import secrets
+
+from flask import Blueprint, flash, make_response, redirect, render_template, request, session, url_for
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash
+from flask_mail import Message
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from database import db
+from util import mail
 from .models import User
 from .forms import LoginForm, UserForm
 
@@ -87,3 +91,56 @@ def account_settings():
         return response
 
     return render_template("settings.html", form=form)
+
+
+@accounts_bp.route("/forgot-password/", methods=["GET", "POST"])
+def forgot_password():
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        email_exists = User.query.filter_by(email_address=email).first()
+        if not email_exists:
+            flash("This email is not registered in our system", "error")
+
+        else:
+            token = secrets.token_urlsafe(32)
+            reset_url = request.host_url + f"recovery/reset-password?token={token}"
+
+            session["reset_token"] = token
+            session["user_email"] = email
+
+            msg = Message(subject="Password Reset", recipients=[email], sender="trmmr@admin.io")
+            msg.html = render_template("reset_password_email.html", reset_url=reset_url)
+            mail.send(msg)
+            flash("Reset link has been sent to your email.")
+
+    return render_template("forgot_pwd.html")
+
+
+@accounts_bp.route("/recovery/reset-password/", methods=["GET", "POST"])
+def reset_password():
+
+    saved_token = session.get("token")
+    token = request.args.get("token")
+    user_email = session.get("user_email")
+    if token == saved_token:
+
+        if request.method == "POST":
+            new_pass1 = request.form.get("password1")
+            new_pass2 = request.form.get("password2")
+
+            if new_pass1 == new_pass2 and new_pass2:
+                user = User.query.filter_by(email_address=user_email).first()
+                user.password_hash = generate_password_hash(new_pass1)
+                db.session.commit()
+
+                flash("Password reset successful", "success")
+                return redirect(url_for(".log_in"))
+
+            else:
+                flash("Passwords don't match", 'error')
+
+    return render_template("reset_password.html")
+
+
+
