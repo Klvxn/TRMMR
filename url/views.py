@@ -117,6 +117,8 @@ def url_analytics(unique_id):
     context = {"url": url, "clicks": url.clicks}
 
     if url.get_total_clicks():
+
+        # Bar chart for most used platforms(OS)
         devices = {
             "Windows": 0,
             "Mac": 0,
@@ -131,7 +133,6 @@ def url_analytics(unique_id):
                 if click.device == k:
                     devices[k] += 1
 
-        # Bar chart for most used platforms(OS)
         plt.figure()
         labels = [device for device in devices.keys()]
         sizes = [value for value in devices.values()]
@@ -146,6 +147,7 @@ def url_analytics(unique_id):
         buffer1.seek(0)
         graph1 = base64.b64encode(buffer1.getvalue()).decode()
 
+        # Pie chart for clicks per day
         target_dates = set()
         for click in url.clicks:
             target_dates.add(click.clicked_at)
@@ -160,7 +162,6 @@ def url_analytics(unique_id):
             except KeyError:
                 click_count[date] = len(click_day)
 
-        # Pie chart for clicks per day
         dates = [str(date) for date in click_count.keys()]
         values = [value for value in click_count.values()]
 

@@ -1,7 +1,6 @@
 import base64, io
 
 import nanoid, qrcode
-import requests
 from flask import request
 from flask_caching import Cache
 from flask_limiter import Limiter
