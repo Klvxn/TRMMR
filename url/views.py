@@ -3,9 +3,10 @@ import io
 from datetime import datetime
 
 import qrcode
-from flask import Blueprint, render_template, request, redirect, make_response, send_file
+from flask import Blueprint, render_template, request, redirect, make_response, send_file, flash
 from flask_login import current_user, login_required
 from matplotlib import pyplot as plt
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from database import db
 from util import cache, limiter, generate_short_url, encode_qrcode_image
@@ -21,18 +22,20 @@ def shorten_url():
 
     if request.method == "POST":
         long_url = request.form.get("long_url")
-        custom_url = request.form.get("custom_half").replace(" ", "-")
+        custom_url = request.form.get("custom_half")
 
         url_exist = Link.query.filter_by(org_url=long_url).first()
         if url_exist:
             short_url = url_exist.short_url
         elif custom_url:
+            custom_url = custom_url.replace(" ", "-")
             short_url = request.host_url + custom_url
         else:
             short_url = generate_short_url()
 
         user_id = current_user.id if current_user.is_authenticated else 0
         new_url = Link(org_url=long_url, short_url=short_url, user_id=user_id)
+
         db.session.add(new_url)
         db.session.commit()
 
@@ -45,18 +48,47 @@ def shorten_url():
     return render_template("home.html", **context)
 
 
+@url_bp.route("/<unique_id>/set/url-password", methods=["POST"])
+def set_url_password(unique_id):
+    short_url = request.host_url + unique_id
+    url = Link.query.filter_by(short_url=short_url).first()
+
+    new_password = request.form.get("url_password")
+    url.password = generate_password_hash(new_password)
+    db.session.commit()
+    flash("URL has been secured", "success")
+    return redirect("/")
+
+
 @url_bp.route("/<unique_id>", methods=["GET"])
 @limiter.limit("20/minute")
 @cache.cached(timeout=60)
 def redirect_to_org_url(unique_id):
     short_url = request.host_url + unique_id
-    url = Link.query.filter_by(short_url=short_url).first_or_404()
-    url.last_visited = datetime.now()
-    device = request.headers.get("Sec-Ch-Ua-Platform", "Others").strip("\"")
-    clicked_at = datetime.now()
-    click = Click(device=device, clicked_at=clicked_at, link_id=url.id)
-    click.save()
+    url = Link.query.filter_by(short_url=short_url, unique_id=unique_id).first_or_404()
+
+    if url.is_password_protected:
+        flash("This URL is password protected. Enter password to gain access.")
+        return render_template("password.html", unique_id=url.unique_id)
+
+    Click.update_click_record(url, request)
     return redirect(url.org_url)
+
+
+@url_bp.route("/<unique_id>/authenticate", methods=["GET", "POST"])
+def check_url_password(unique_id):
+    short_url = request.host_url + unique_id
+    url = Link.query.filter_by(short_url=short_url).first_or_404()
+
+    if request.method == "POST":
+        password = request.form.get("password")
+
+        if password and check_password_hash(url.password, password):
+            Click.update_click_record(url, request)
+            return redirect(url.org_url)
+
+        flash("The password you entered is invalid", "error")
+    return render_template("password.html", unique_id=url.unique_id)
 
 
 @url_bp.route("/generate-qrcode", methods=["GET", "POST"])
@@ -94,10 +126,11 @@ def generate_qrcode():
 
 
 @url_bp.route("/history", methods=["GET", "POST"])
-@cache.cached(timeout=50)
+@cache.cached(timeout=30)
 @login_required
 def user_history():
-    context = {"urls": current_user.links}
+    user_urls = Link.query.filter_by(user_id=current_user.id).order_by(Link.created_at.desc()).all()
+    context = {"urls": user_urls}
 
     # Clear URL history
     if request.method == "POST":

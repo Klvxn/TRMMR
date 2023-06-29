@@ -18,7 +18,7 @@ TRMMR offers the following features:
 3. **Click Tracking and Analytics:** The application tracks the number of clicks received for each shortened URL. Users can view analytics data such as total clicks, clicks per day, and the most clicked day for each shortened URL with graphical representation.
 4. **QR Code Generation:** The application generates QR codes for each shortened URL, making it convenient for users to download and share URLs across devices.
 5. **History:** For users who would like to browse through URLs they previously shortened, the application also includes a history feature. URLs that were shortened by a user are stored and made accessible to users any time.  
-6. **Password-Protected URLs:** Users can choose to protect their shortened URLs with a password for added security. (Work in progress)
+6. **Password-Protected URLs:** Users can choose to protect their shortened URLs with a password for added security. 
 
 ## Installation
 To set up the URL Shortener application, follow these steps:

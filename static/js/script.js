@@ -71,3 +71,25 @@ function clearInput() {
     tag.value = "";
   })
 }
+
+
+// Add Password Form
+function addPasswordForm() {
+  const container = document.getElementById("pwd-form");
+  const input = document.createElement("input");
+  const button = document.createElement("button");
+
+  input.type = "password";
+  input.required = true;
+  input.placeholder = "Enter Password";
+  input.size = 60;
+  input.className = "mb-3";
+  input.name = "url_password";
+
+  button.innerHTML = "Submit";
+  button.type = "submit";
+
+  container.innerHTML = "";
+  container.appendChild(input);
+  container.appendChild(button);
+}

@@ -179,3 +179,8 @@ code {
   text-align: center;
   /*border: 1px lightgray solid;*/
 }
+
+#pwd-container, #pwd-form {
+  margin: 3rem auto;
+  text-align: center;
+}

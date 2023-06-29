@@ -44,7 +44,7 @@
             <img src="/static/images/clear.png" alt="" height="20" width="20">
           </button>
           <input class="my-4 mx-4" type="text" name="custom_half" id="custom_url"
-                 placeholder="Add custom half e.g. trmmr.io/your-custom-half" size="60">
+                 placeholder="Add custom half e.g. trmmr.io/your-custom-half (Optional)" size="60">
           <button type="submit" class="mt-4">
             <img src="/static/images/logo-2.png" alt="" width="30" height="24">
             TRM
@@ -59,14 +59,19 @@
                 <img src="/static/images/clippy.svg" alt="" height="20" width="20">
               </button></code>
             </div>
-          {% elif current_user.is_authenticated %}
+            <div id="pwd-container">
+              <form action="{{ url_for("url.set_url_password", unique_id=short_url.split('/')[-1]) }}" method="post" class="my-5 mx-auto" id="pwd-form">
+                <button onclick="addPasswordForm()">Secure URL</button>
+              </form>
+            </div>
+          {% elif current_user.is_authenticated and last_shortened %}
             <div class="last-short">
               <h5>Last TRMMD URL</h5>
               <div class="m-auto py-3">
                 <b>TRMMD:</b> <a href="{{ last_shortened.short_url }}">{{ last_shortened.short_url }}</a><br>
                 Original URL: <a href="{{ last_shortened.org_url }}" class="justlink text-small">{{ last_shortened.org_url[0:70] }}...</a><br>
-                <span class="text-muted">{{ last_shortened.get_total_clicks() }} CLicks</span><br>
-                <a class="m-1 p-1 float-end" href="{{ url_for('url.url_analytics', unique_id=last_shortened.short_url.split('/')[-1]) }}">
+                <span class="text-muted">{{ last_shortened.get_total_clicks() }} Clicks</span><br>
+                <a class="m-1 p-1 float-end" href="{{ url_for('url.url_analytics', unique_id=last_shortened.unique_id) }}">
                   View analytics ->
                 </a>
               </div>
