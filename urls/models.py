@@ -12,7 +12,7 @@ class ShortenedURL(db.Model):
     short_url = db.Column(db.String, nullable=False)
     unique_id = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=True)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    created_at = db.Column(db.DateTime, default=datetime.now)
     last_visited = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     clicks = db.relationship("Click", backref="url_clicks",  lazy=True)

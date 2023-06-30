@@ -60,7 +60,7 @@
               </button></code>
             </div>
             <div id="pwd-container">
-              <form action="{{ url_for("url.set_url_password", unique_id=short_url.split('/')[-1]) }}" method="post" class="my-5 mx-auto" id="pwd-form">
+              <form action="{{ url_for('url.set_url_password', unique_id=short_url.split('/')[-1]) }}" method="post" class="my-5 mx-auto" id="pwd-form">
                 <button onclick="addPasswordForm()">Secure URL</button>
               </form>
             </div>
@@ -77,7 +77,7 @@
               </div>
             </div>
           {% endif %}
-          <div id="target" class="mt-3">
+          <div class="mt-3">
             {% if current_user.is_authenticated and short_url %}
               <button hx-post="{{ url_for('url.generate_qrcode', url=short_url) }}" hx-target="#target">Generate QR code</button>
             {% endif %}
