@@ -1,10 +1,14 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 BASE_PATH = Path(__file__).resolve().parent
-DATABASE_PATH = os.path.join(BASE_PATH, "database")
-SQLALCHEMY_DATABASE_URI = f"sqlite:///{DATABASE_PATH}/TRMMRDB"
-SECRET_KEY = "safe-space"
+SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 CACHE_TYPE = "FileSystemCache"
 CACHE_THRESHOLD = 200
 CACHE_DIR = os.path.join(BASE_PATH, "cache/app")

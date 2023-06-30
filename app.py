@@ -4,7 +4,7 @@ from flask_login import LoginManager
 from accounts.models import User
 from accounts.views import accounts_bp
 from database import db
-from url.views import url_bp
+from urls.views import url_bp
 from util import cache, limiter, mail
 
 app = Flask(__name__)

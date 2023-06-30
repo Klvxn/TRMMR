@@ -6,12 +6,14 @@ from database import db
 
 class User(db.Model, UserMixin):
 
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     email_address = db.Column(db.String, nullable=False, unique=True)
     password_hash = db.Column(db.String, nullable=False)
-    links = db.relationship("Link", backref="user_links", lazy=True)
+    links = db.relationship("ShortenedURL", backref="user_links", lazy=True)
 
     def __init__(self, first_name, last_name, email, password):
         self.first_name = first_name

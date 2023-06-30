@@ -2,7 +2,9 @@ from datetime import datetime
 from database import db
 
 
-class Link(db.Model):
+class ShortenedURL(db.Model):
+
+    __tablename__ = "shortened_urls"
 
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     # title = db.Column(db.String, nullable=True)
@@ -12,7 +14,7 @@ class Link(db.Model):
     password = db.Column(db.String, nullable=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     last_visited = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     clicks = db.relationship("Click", backref="url_clicks",  lazy=True)
 
     def __init__(self, **kwargs):
@@ -30,13 +32,15 @@ class Link(db.Model):
 
 class Click(db.Model):
 
+    __tablename__ = "clicks"
+
     id = db.Column(db.Integer, primary_key=True)
     device = db.Column(db.String(100))
     clicked_at = db.Column(db.Date, default=datetime.now)
-    link_id = db.Column(db.Integer, db.ForeignKey("link.id"))
+    link_id = db.Column(db.Integer, db.ForeignKey("shortened_urls.id"))
 
     def __repr__(self):
-        return f"Click for Link: {self.link_id}"
+        return f"Click for ShortenedURL: {self.link_id}"
 
     def save(self):
         db.session.add(self)

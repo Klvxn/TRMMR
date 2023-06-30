@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from database import db
 from util import cache, limiter, generate_short_url, encode_qrcode_image
-from .models import Link, Click
+from .models import ShortenedURL, Click
 
 url_bp = Blueprint("url", __name__)
 
@@ -24,7 +24,7 @@ def shorten_url():
         long_url = request.form.get("long_url")
         custom_url = request.form.get("custom_half")
 
-        url_exist = Link.query.filter_by(org_url=long_url).first()
+        url_exist = ShortenedURL.query.filter_by(org_url=long_url).first()
         if url_exist:
             short_url = url_exist.short_url
         elif custom_url:
@@ -34,7 +34,7 @@ def shorten_url():
             short_url = generate_short_url()
 
         user_id = current_user.id if current_user.is_authenticated else 0
-        new_url = Link(org_url=long_url, short_url=short_url, user_id=user_id)
+        new_url = ShortenedURL(org_url=long_url, short_url=short_url, user_id=user_id)
 
         db.session.add(new_url)
         db.session.commit()
@@ -42,7 +42,7 @@ def shorten_url():
         context["short_url"] = short_url
 
     if current_user.is_authenticated:
-        last_shortened = Link.query.filter_by(user_id=current_user.id).order_by(Link.created_at.desc()).first()
+        last_shortened = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).first()
         context["last_shortened"] = last_shortened
 
     return render_template("home.html", **context)
@@ -51,7 +51,7 @@ def shorten_url():
 @url_bp.route("/<unique_id>/set/url-password", methods=["POST"])
 def set_url_password(unique_id):
     short_url = request.host_url + unique_id
-    url = Link.query.filter_by(short_url=short_url).first()
+    url = ShortenedURL.query.filter_by(short_url=short_url).first()
 
     new_password = request.form.get("url_password")
     url.password = generate_password_hash(new_password)
@@ -65,7 +65,7 @@ def set_url_password(unique_id):
 @cache.cached(timeout=60)
 def redirect_to_org_url(unique_id):
     short_url = request.host_url + unique_id
-    url = Link.query.filter_by(short_url=short_url, unique_id=unique_id).first_or_404()
+    url = ShortenedURL.query.filter_by(short_url=short_url, unique_id=unique_id).first_or_404()
 
     if url.is_password_protected:
         flash("This URL is password protected. Enter password to gain access.")
@@ -78,7 +78,7 @@ def redirect_to_org_url(unique_id):
 @url_bp.route("/<unique_id>/authenticate", methods=["GET", "POST"])
 def check_url_password(unique_id):
     short_url = request.host_url + unique_id
-    url = Link.query.filter_by(short_url=short_url).first_or_404()
+    url = ShortenedURL.query.filter_by(short_url=short_url).first_or_404()
 
     if request.method == "POST":
         password = request.form.get("password")
@@ -129,7 +129,7 @@ def generate_qrcode():
 @cache.cached(timeout=30)
 @login_required
 def user_history():
-    user_urls = Link.query.filter_by(user_id=current_user.id).order_by(Link.created_at.desc()).all()
+    user_urls = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).all()
     context = {"urls": user_urls}
 
     # Clear URL history
@@ -146,7 +146,7 @@ def user_history():
 @login_required
 def url_analytics(unique_id):
     short_url = request.host_url + unique_id
-    url = Link.query.filter_by(short_url=short_url).first_or_404()
+    url = ShortenedURL.query.filter_by(short_url=short_url).first_or_404()
     context = {"url": url, "clicks": url.clicks}
 
     if url.get_total_clicks():
