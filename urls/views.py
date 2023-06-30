@@ -1,9 +1,8 @@
-import base64
-import io
+import base64, io
 from datetime import datetime
 
 import qrcode
-from flask import Blueprint, render_template, request, redirect, make_response, send_file, flash
+from flask import Blueprint, flash, make_response, render_template, request, redirect, send_file
 from flask_login import current_user, login_required
 from matplotlib import pyplot as plt
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -19,31 +18,45 @@ url_bp = Blueprint("url", __name__)
 @limiter.limit("20/minute")
 def shorten_url():
     context = {"current_user": current_user}
+    
+    if current_user.is_authenticated:
+        last_shortened_url = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).first()
+        context["last_shortened_url"] = last_shortened_url
+            
 
     if request.method == "POST":
         long_url = request.form.get("long_url")
         custom_url = request.form.get("custom_half")
+        short_url = None
 
-        url_exist = ShortenedURL.query.filter_by(org_url=long_url).first()
-        if url_exist:
-            short_url = url_exist.short_url
-        elif custom_url:
-            custom_url = custom_url.replace(" ", "-")
-            short_url = request.host_url + custom_url
+        if current_user.is_authenticated:
+            user_id = current_user.id
+            url_exist = ShortenedURL.query.filter_by(org_url=long_url, user_id=user_id).first()
+            
+            if url_exist:
+                short_url = url_exist.short_url
+
+                if custom_url:
+                    _url = custom_url.replace(" ", "-")
+                    short_url = request.host_url + _url
+                    url_exist.short_url = short_url
+                    url_exist.unique_id = _url
+                    db.session.commit()
+                
+            else:
+                short_url = request.host_url + custom_url.replace(" ", "-") if custom_url else generate_short_url()
+                new_url = ShortenedURL(org_url=long_url, short_url=short_url, user_id=user_id)
+
+                db.session.add(new_url)
+                db.session.commit()
+        
         else:
-            short_url = generate_short_url()
-
-        user_id = current_user.id if current_user.is_authenticated else 0
-        new_url = ShortenedURL(org_url=long_url, short_url=short_url, user_id=user_id)
-
-        db.session.add(new_url)
-        db.session.commit()
-
+            if custom_url:
+                short_url = request.host_url + custom_url.replace(" ", "-")
+            else:
+                short_url = generate_short_url()
+        
         context["short_url"] = short_url
-
-    if current_user.is_authenticated:
-        last_shortened = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).first()
-        context["last_shortened"] = last_shortened
 
     return render_template("home.html", **context)
 
@@ -56,7 +69,7 @@ def set_url_password(unique_id):
     new_password = request.form.get("url_password")
     url.password = generate_password_hash(new_password)
     db.session.commit()
-    flash("URL has been secured", "success")
+    flash("URL is now secured", "success")
     return redirect("/")
 
 
@@ -130,15 +143,17 @@ def generate_qrcode():
 @login_required
 def user_history():
     user_urls = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).all()
-    context = {"urls": user_urls}
 
     # Clear URL history
     if request.method == "POST":
+        
         for link in current_user.links:
             db.session.delete(link)
             db.session.commit()
+            
         return redirect("/history")
 
+    context = {"urls": user_urls}
     return render_template("history.html", **context)
 
 

@@ -46,7 +46,7 @@ def log_in():
             if next_url:
                 return redirect(next_url)
 
-            flash("You are logged in successfully", "success")
+            flash("You are now logged in", "success")
             return redirect("/")
 
         else:
@@ -119,10 +119,10 @@ def forgot_password():
 
 @accounts_bp.route("/recovery/reset-password/", methods=["GET", "POST"])
 def reset_password():
-
     saved_token = session.get("token")
     token = request.args.get("token")
     user_email = session.get("user_email")
+    
     if token == saved_token:
 
         if request.method == "POST":
@@ -141,6 +141,3 @@ def reset_password():
                 flash("Passwords don't match", 'error')
 
     return render_template("reset_password.html")
-
-
-

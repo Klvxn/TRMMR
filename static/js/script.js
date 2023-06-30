@@ -4,18 +4,18 @@ flashMessages.forEach((message) => {
   const category = message.getAttribute('data-category');
 
   switch (category) {
-    case 'success':
-      message.style.backgroundColor = 'lightgreen';
-      break;
     case 'error':
       message.style.backgroundColor = 'lightcoral';
+      break;
+    case 'success':
+      message.style.backgroundColor = 'lightgreen';
       break;
     default:
       message.style.backgroundColor = 'cadetblue';
   }
   setTimeout(() => {
     message.style.display = "none";
-    }, 3000);
+  }, 3000);
 });
 
 
