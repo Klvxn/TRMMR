@@ -184,3 +184,12 @@ code {
   margin: 3rem auto;
   text-align: center;
 }
+
+.bubble {
+  padding: .5rem;
+  background-color: cadetblue;
+  color: white;
+  border-radius: 10rem;
+  font-size: small;
+  font-weight: bold;
+}

@@ -1,6 +1,8 @@
 from datetime import datetime
 from database import db
 
+from user_agents import parse
+
 
 class ShortenedURL(db.Model):
 
@@ -36,6 +38,7 @@ class Click(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     device = db.Column(db.String(100))
+    browser = db.Column(db.String)
     clicked_at = db.Column(db.Date, default=datetime.now)
     link_id = db.Column(db.Integer, db.ForeignKey("shortened_urls.id"))
 
@@ -48,9 +51,18 @@ class Click(db.Model):
 
     @staticmethod
     def update_click_record(url, request):
+        print("updating...")
         url.last_visited = datetime.now()
-        device = request.headers.get("Sec-Ch-Ua-Platform", "Others").strip("\"")
+        ua_string = request.headers.get("User-Agent")
+        user_agent = parse(ua_string)
+        device = user_agent.os.family
+        browser = user_agent.browser.family
         clicked_at = datetime.now()
-        click = Click(device=device, clicked_at=clicked_at, link_id=url.id)
+        click = Click(
+            clicked_at=clicked_at,
+            browser=browser,
+            device=device,
+            link_id=url.id
+        )
         click.save()
         return

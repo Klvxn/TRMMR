@@ -1,4 +1,4 @@
- <h1 align=center><img src="static/images/logo.png" alt="Image Description" width="100" height="50">TRMMR </h1>
+ <h1 align=center><img src="static/images/logo.png" alt="Image Description" width="70" height="55">TRMMR </h1>
 
 ## Introduction
 TRMMR is a web-based tool that allows users to shorten long URLs into shorter and more manageable links. It provides a simple, user-friendly interface to generate short URLs, track clicks, and manage the URLs and also user data.
@@ -126,14 +126,14 @@ Another way to generate a QR code is to click on _QR CODES_ in the side navigati
    number of clicks on your shortened URL,
    day it was last visited, day with the most clicks, 
    etc. with graphical representation to show you this data. 
-7. Othes: On the sidebar, you can also update your information including email, first and last names and even have 
-   the option to deleter your account. 
+7. Others: On the sidebar, you can also update your information including email, first and last names and even have 
+   the option to delete your account. 
 
 ## Acknowledgements
 TRMMR is built on top of the Flask micro web framework and utilizes various open-source libraries and 
 extensions. The development of this application was inspired by the need for a simple and efficient URL shortening 
 solution. I would like to thank the Flask community, the contributors of the used extensions, and all the developers 
-involved in creating the underlying technologies. And also the tutors and everyone at [Altschool Africa](https://altschoolafrica.com) for the oppoturnity to be 
+involved in creating the underlying technologies. And also the tutors and everyone at [Altschool Africa](https://altschoolafrica.com) for the opportunity to be 
 build this application as the capstone project.
 
 ## License

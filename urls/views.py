@@ -17,7 +17,8 @@ url_bp = Blueprint("url", __name__)
 @url_bp.route("/", methods=["GET", "POST"])
 @limiter.limit("20/minute")
 def shorten_url():
-    context = {"current_user": current_user}
+    cached = cache.get("short_link")
+    context = {"current_user": current_user, "cached": cached}
     
     if current_user.is_authenticated:
         last_shortened_url = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).first()
@@ -44,17 +45,15 @@ def shorten_url():
                     db.session.commit()
                 
             else:
-                short_url = request.host_url + custom_url.replace(" ", "-") if custom_url else generate_short_url()
+                short_url = generate_short_url(custom_url=custom_url) if custom_url else generate_short_url()
                 new_url = ShortenedURL(org_url=long_url, short_url=short_url, user_id=user_id)
 
                 db.session.add(new_url)
                 db.session.commit()
         
         else:
-            if custom_url:
-                short_url = request.host_url + custom_url.replace(" ", "-")
-            else:
-                short_url = generate_short_url()
+            short_link = short_url = generate_short_url(custom_url=custom_url) if custom_url else generate_short_url()
+            cache.set("short_link", short_link, timeout=60)
         
         context["short_url"] = short_url
 
@@ -75,7 +74,6 @@ def set_url_password(unique_id):
 
 @url_bp.route("/<unique_id>", methods=["GET"])
 @limiter.limit("20/minute")
-@cache.cached(timeout=60)
 def redirect_to_org_url(unique_id):
     short_url = request.host_url + unique_id
     url = ShortenedURL.query.filter_by(short_url=short_url, unique_id=unique_id).first_or_404()
@@ -166,24 +164,20 @@ def url_analytics(unique_id):
 
     if url.get_total_clicks():
 
-        # Bar chart for most used platforms(OS)
-        devices = {
-            "Windows": 0,
-            "Mac": 0,
-            "Linux": 0,
-            "Android": 0,
-            "iOS": 0,
-            "Others": 0
-        }
+        # Pie chart for most used platforms(OS)
+        devices = [click.device for click in url.clicks]
+        device_count = {}
+        
+        for device in devices:
+            if device in device_count:
+                device_count[device] += 1
+            else: 
+                device_count[device] = 1
 
-        for click in url.clicks:
-            for k, v in devices.items():
-                if click.device == k:
-                    devices[k] += 1
-
+        labels = device_count.keys()
+        sizes = device_count.values()
+        
         plt.figure()
-        labels = [device for device in devices.keys()]
-        sizes = [value for value in devices.values()]
         plt.pie(sizes, autopct='%1.1f%%', startangle=90)
         plt.title("Most Used Platforms", loc="center", fontsize=20)
         plt.subplots_adjust(bottom=0)
@@ -195,7 +189,7 @@ def url_analytics(unique_id):
         buffer1.seek(0)
         graph1 = base64.b64encode(buffer1.getvalue()).decode()
 
-        # Pie chart for clicks per day
+        # Bar chart for clicks per day
         target_dates = set()
         for click in url.clicks:
             target_dates.add(click.clicked_at)
@@ -225,6 +219,34 @@ def url_analytics(unique_id):
         plt.savefig(buffer2, format="png")
         buffer2.seek(0)
         graph2 = base64.b64encode(buffer2.getvalue()).decode()
+        
+        # Create a bar chart for browsers
+        browsers = [click.browser for click in url.clicks]
+        browser_counts = {}
+        
+        for browser in browsers:
+            if browser in browser_counts:
+                browser_counts[browser] += 1
+            else:
+                browser_counts[browser] = 1
+
+        most_used_browser = max(browser_counts.items(), key=lambda x: x[1])
+        browser_labels = browser_counts.keys()
+        counts = browser_counts.values()
+
+        plt.figure()
+        plt.bar(browser_labels, counts, width=0.3, color="purple")
+        plt.xlabel("Browsers")
+        plt.ylabel("Clicks")
+        plt.title("Browser Distribution", fontsize=20, pad=40)
+        plt.subplots_adjust(bottom=0.2, top=0.8)
+        plt.xticks(rotation=45)
+        
+        buffer3 = io.BytesIO()
+        plt.savefig(buffer3, format="png")
+        buffer3.seek(0)
+        graph3 = base64.b64encode(buffer3.getvalue()).decode()
+        
 
         # Get the day with most clicks
         zipped = zip(dates, values)
@@ -235,8 +257,10 @@ def url_analytics(unique_id):
         context.update({
             "platform_chart": graph1,
             "click_chart": graph2,
+            "browser_chart": graph3,
             "click_count": click_count,
-            "max_clicks_day": max_clicks_day
+            "max_clicks_day": max_clicks_day,
+            "most_used_browser": most_used_browser
         })
 
     return render_template("analytics.html", **context)

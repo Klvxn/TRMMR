@@ -12,9 +12,12 @@ limiter = Limiter(get_remote_address)
 mail = Mail()
 
 
-def generate_short_url():
+def generate_short_url(custom_url=None):
     host = request.host_url
-    unique_id = nanoid.generate(size=12)
+    if not custom_url:
+        unique_id = nanoid.generate(size=12)
+    else:
+        unique_id = custom_url.replace(" ", "-")
     new_short_url = host + unique_id
     return new_short_url
 

@@ -37,6 +37,16 @@
           <figure>
             <img src="data:image/png;base64,{{ click_chart }}" alt="Bar Chart" height=360 width=480>
           </figure>
+          <div class="my-card">
+            <div class="circle shadow bg-dark mb-3">
+              {{ most_used_browser|first }} <br>
+              {{ most_used_browser|last }} clicks <br>
+            </div>
+            <h3>Most Used Browser</h3>
+          </div>
+          <figure>
+            <img src="data:image/png;base64,{{ browser_chart }}" alt="Bar Chart" height=360 width=480>
+          </figure>
         {% endif %}
       </div>
     </div>
