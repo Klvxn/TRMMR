@@ -32,6 +32,7 @@ qrcode==7.4.2
 SQLAlchemy==2.0.13
 typing_extensions==4.5.0
 urllib3==2.0.2
+user-agents==2.2.0
 Werkzeug==2.3.4
 wrapt==1.15.0
 WTForms==3.0.1
