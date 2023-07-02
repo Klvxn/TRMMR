@@ -1,4 +1,4 @@
-import base64, io
+import base64, io, math
 from datetime import datetime
 
 import qrcode
@@ -30,28 +30,37 @@ def shorten_url():
 
         if current_user.is_authenticated:
             user_id = current_user.id
-            url_exist = ShortenedURL.query.filter_by(org_url=long_url, user_id=user_id).first()
+            url_exist = ShortenedURL.query.filter_by(original_url=long_url, user_id=user_id).first()
             
             if url_exist:
                 short_url = url_exist.short_url
 
                 if custom_url:
                     _url = custom_url.replace(" ", "-")
-                    short_url = request.host_url + _url
-                    url_exist.short_url = short_url
-                    url_exist.unique_id = _url
-                    db.session.commit()
-                
-            else:
-                short_url = generate_short_url(custom_url=custom_url) if custom_url else generate_short_url()
-                new_url = ShortenedURL(org_url=long_url, short_url=short_url, user_id=user_id)
+                    custom_name_exist = ShortenedURL.query.filter_by(unique_id=_url).first()
 
-                db.session.add(new_url)
-                db.session.commit()
-        
+                    if not custom_name_exist:
+                        short_url = request.host_url + _url
+                        url_exist.short_url = short_url
+                        url_exist.unique_id = _url
+                        db.session.commit()
+
+                    else:
+                        flash(f"A URL with custom name: {custom_url}, already exists", "error")
+
+            else:
+                short_url, error = generate_short_url(custom_url=custom_url) if custom_url else generate_short_url()
+
+                if not error:
+                    new_url = ShortenedURL(original_url=long_url, short_url=short_url, user_id=user_id)
+                    db.session.add(new_url)
+                    db.session.commit()
+
+                else:
+                    flash(error, "error")
         else:
-            short_url = generate_short_url(custom_url=custom_url) if custom_url else generate_short_url()
-        
+            short_url, _ = generate_short_url()
+
         context["short_url"] = short_url
 
     return render_template("home.html", **context)
@@ -69,6 +78,7 @@ def set_url_password(unique_id):
 
 
 @url_bp.route("/<unique_id>", methods=["GET"])
+@cache.cached(timeout=50)
 @limiter.limit("20/minute")
 def redirect_to_org_url(unique_id):
     short_url = request.host_url + unique_id
@@ -79,7 +89,7 @@ def redirect_to_org_url(unique_id):
         return render_template("password.html", unique_id=url.unique_id)
 
     Click().record_click(url, request)
-    return redirect(url.org_url)
+    return redirect(url.original_url)
 
 
 @url_bp.route("/authenticate/url/<unique_id>", methods=["GET", "POST"])
@@ -92,13 +102,14 @@ def check_url_password(unique_id):
 
         if password and check_password_hash(url.password, password):
             Click().record_click(url, request)
-            return redirect(url.org_url)
+            return redirect(url.original_url)
 
         flash("The password you entered is invalid", "error")
     return render_template("password.html", unique_id=url.unique_id)
 
 
 @url_bp.route("/qrcodes/generate", methods=["GET", "POST"])
+@cache.cached(timeout=50)
 @login_required
 def generate_qrcode():
     if request.method == "POST":
@@ -133,10 +144,13 @@ def generate_qrcode():
 
 
 @url_bp.route("/history", methods=["GET", "POST"])
-@cache.cached(timeout=30)
 @login_required
 def user_history():
-    user_urls = ShortenedURL.get_user_recent_urls(current_user.id).all()
+    page = int(request.args.get("page", 1))
+    per_page = 3
+    url_history = ShortenedURL.get_user_recent_urls(current_user.id).paginate(page=page, per_page=per_page)
+    total_results = ShortenedURL.get_user_recent_urls(current_user.id).count()
+    total_pages = math.ceil(total_results / per_page)
 
     # Clear URL history
     if request.method == "POST":
@@ -147,7 +161,7 @@ def user_history():
             
         return redirect("/history")
 
-    context = {"urls": user_urls}
+    context = {"url_history": url_history, "page": page, "total_pages": total_pages}
     return render_template("history.html", **context)
 
 

@@ -7,6 +7,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_mail import Mail
 
+from urls.models import ShortenedURL
+
 cache = Cache()
 limiter = Limiter(get_remote_address)
 mail = Mail()
@@ -14,12 +16,26 @@ mail = Mail()
 
 def generate_short_url(custom_url=None):
     host = request.host_url
+    error = None
+
     if not custom_url:
-        unique_id = nanoid.generate(size=12)
+
+        while True:
+            unique_id = nanoid.generate(size=12)
+            url_exist = ShortenedURL.query.filter_by(unique_id=unique_id).first()
+            if not url_exist:
+                break
+
     else:
         unique_id = custom_url.replace(" ", "-")
-    new_short_url = host + unique_id
-    return new_short_url
+        custom_name_exist = ShortenedURL.query.filter_by(unique_id=unique_id).first()
+
+        if custom_name_exist:
+            error = f"A URL with custom name: {unique_id}, already exists"
+            unique_id = None
+
+    new_short_url = host + unique_id if unique_id else ""
+    return new_short_url, error
 
 
 def encode_qrcode_image(data):

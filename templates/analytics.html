@@ -8,7 +8,7 @@
         <p class="mb-5"><code>
           <a href="{{ url.short_url }}" class="justlink ">{{ url.short_url }}</a>
         </code></p>
-        <p class="text-small">URL: <a class="justlink">{{ url.org_url[:50] }}...</a></p>
+        <p class="text-small">URL: <a class="justlink">{{ url.original_url[:50] }}...</a></p>
         <p class="text-muted">Date Created: {{ url.created_at.strftime('%Y/%b/%d %H:%M:%S')  }}</p>
         <p class="text-muted">
           {% if url.last_visited %}

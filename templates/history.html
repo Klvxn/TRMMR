@@ -4,23 +4,32 @@
   <div class="m-auto">
     <div class="history">
       <h4>Your TRMMR History</h4>
-      {% for url in urls %}
+      {% for url in url_history %}
         <div class="my-5 py-3">
           <b>TRMMD:</b> <a href="{{ url.short_url }}" class="d-inline">{{ url.short_url }}</a>
           <button hx-post="/url/delete/{{ url.unique_id }}" class="w-auto delete p-1">
             <img src="static/images/delete-button.svg" alt="Delete" height="15" width="15">
           </button><br>
-          <b>Original URL:</b> <a href="{{ url.org_url }}" class="justlink">{{ url.org_url[0:50] }}...</a><br>
+          <b>Original URL:</b> <a href="{{ url.org_url }}" class="justlink">{{ url.original_url[0:50] }}...</a><br>
           <b>Date Created:</b> <span class="text-muted">{{ url.created_at }}</span><br>
           <a class="m-1 p-1 float-end" href="{{ url_for('url.url_analytics', unique_id=url.unique_id) }}">
             View analytics ->
           </a>
         </div>
       {% endfor %}
-      {% if urls %}
-        <form action="" class="my-5" method="post">
-          <button type="submit">Clear history</button>
-        </form>
+      {% if url_history %}
+        <div>
+          {% if url_history.has_prev %}
+            <a href="{{ url_for('url.user_history', page=url_history.prev_num) }}" class="justlink">Previous</a>
+          {% endif %}
+          Page {{ page }} of {{ total_pages }}
+          {% if url_history.has_next %}
+            <a href="{{ url_for('url.user_history', page=url_history.next_num) }}" class="justlink">Next</a>
+          {% endif %}
+          <form action="" class="my-5" method="post">
+            <button type="submit">Clear history</button>
+          </form>
+        </div>
       {% endif %}
     </div>
   </div>

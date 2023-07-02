@@ -11,7 +11,7 @@ The application follows a client-server architecture. The server is built using 
 and provides responses. The server interacts with a database to store the shortened URLs and their 
 corresponding 
 original URLs and also user data. <br>
-In development, a SQLite databse was used. But upon moving to production environment, a Postgres database hosted on 
+In development, a SQLite database was used. But upon moving to a production environment, a Postgres database hosted on 
 [Render](https://render.com)
 is used.
 
@@ -39,7 +39,7 @@ The application utilizes these major extensions to enhance its functionality:
 4. **Flask-SQLAlchemy**: a Flask extension that simplifies database integration and provides an ORM layer for 
    interacting with databases. In the URL Shortener application, Flask-SQLAlchemy is used for defining database models, such as the ShortenedURL and User models. It provides an intuitive and Pythonic interface for querying and manipulating database records, making it easier to work with the database in a Flask application.
 
-Other extensions used are Flask-Login,Flask-WTforms, Flask-Mail etc.
+Other extensions used are Flask-Login, Flask-WTforms, Flask-Mail etc.
 ## Features
 TRMMR offers the following features:
 

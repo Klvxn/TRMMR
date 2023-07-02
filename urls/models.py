@@ -10,9 +10,9 @@ class ShortenedURL(db.Model):
 
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     # title = db.Column(db.String, nullable=True)
-    org_url = db.Column(db.String, nullable=False)
-    short_url = db.Column(db.String, nullable=False)
-    unique_id = db.Column(db.String, nullable=False)
+    original_url = db.Column(db.String, nullable=False)
+    short_url = db.Column(db.String, nullable=False, unique=True)
+    unique_id = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now)
     last_visited = db.Column(db.DateTime)
