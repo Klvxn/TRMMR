@@ -10,7 +10,10 @@ And also other necessary libraries like matplotlib for generating charts for ana
 The application follows a client-server architecture. The server is built using Flask, which handles the requests 
 and provides responses. The server interacts with a database to store the shortened URLs and their 
 corresponding 
-original URLs and also user data.
+original URLs and also user data. <br>
+In development, a SQLite databse was used. But upon moving to production environment, a Postgres database hosted on 
+[Render](https://render.com)
+is used.
 
 ## Extensions Used
 The application utilizes these major extensions to enhance its functionality:
@@ -100,31 +103,34 @@ features of the application as unauthenticated users are restricted to shortenin
 ***
 1. Generating short URLs: Go to the home page and on the input form, paste in a long URL you'd like to trim and 
    click the _TRM_ button. A new clean and short URL would be generated for you.
-2. Customizing shortened URLs: To customize the short URL to your taste, there's a second input form that allows to 
-   the second half of the generated URL. Enter what you prefer and just like before, click the _TRM_ button
-   <br> All blank spaces will be converted to hyphens.
-3. Generating QR Codes: With the short URL generated for you, you have an option to generate a QR code for the URL 
-   immediately. To do this, just below the newly created URL, click the Generate QR code button and a box-sized QR 
-   code image will be generated for you. You can also download this image to your device and share it. <br>
+2. Customizing shortened URLs: To customize the shortened URL to your taste, there's a second input form that allows you
+   to customize
+   the second half of the generated URL. Enter what you prefer and just like before, click the _TRM_ button.
+   <br> P.S: All blank spaces will be converted to hyphens.
+3. Generating QR Codes: With the short URL generated for you, you have an option to generate a QR code for the URL. 
+   To do this, just below the newly created URL, click the _Generate QR Code_ button and a box-sized QR 
+   code image will be generated. You can also download this image to your device and share it. <br>
 Another way to generate a QR code is to click on _QR CODES_ in the side navigation bar. In this page, you can just 
-   paste in a short or long URLs and generate the QR code image and also download it to your device. 
-4. Securing shorten URLs with password:  For users that would want to shorten URLs that contain sensitive information 
+   paste in a short or long URL, then generate the QR code image and also download it to your device. 
+4. Securing shorten URLs with password:  For users that would want to shorten URLs that may or may not contain 
+   sensitive 
+   information 
    or data that 
    you'd want to keep from everyone else except yourself, you can shorten a URL and secure it with a password. Any 
-   user that clicks on the shorten URL will be redirected to a page to input the password to the URL before they are 
-   redirected to the main URL. <br>
+   user that clicks on the shortened URL will be redirected to a page to enter the password to the URL before they are 
+   redirected to the original URL. <br>
     To use this feature, after generating a new short URL, click the _SECURE URL_ button. This button would create a 
-   password input form for you to secure your URL. Enter the URL and submit. <br>
+   password input form for you to secure your URL. Enter the a strong password and submit. <br>
     NOTE: You won't be able to recover your URL if you lost the password.
 5. Viewing and clearing your TRMMR history: To see a history of URLs you've previously shortened, click
    _HISTORY_ on 
-   the side navigation tab. This would take show you a list of all your URLs, with their respective creation dates. 
-   Below the list, you have the CLEAR HISTORY button that will wipe all your generated URLs from the database, and 
-   give you the chance to start fresh.
-6. Viewing analytics: For each URL in your TRMMR history, you can view analytics and monitor how your shortened 
-   URL has been performing. On the history page, click on the VIEW ANALYTICS link. In this page, you can view the 
-   number of clicks on your shortened URL,
-   day it was last visited, day with the most clicks, 
+   the sidebar. This would take show you a list of all your URLs, with their respective creation dates. 
+   Below the list, you have the CLEAR HISTORY button that will wipe all your generated URLs from the database (giving 
+   you the chance to start afresh and fresh :)
+6. Viewing analytics: For each URL in your TRMMR history, you can view the analytics and monitor how your shortened 
+   URL has been performing. On the history page, click on the _VIEW_ _ANALYTICS_ link. In this page, you can view the 
+   number of clicks on your shortened URL, the
+   day it was last visited, the day with the most clicks, 
    etc. with graphical representation to show you this data. 
 7. Others: On the sidebar, you can also update your information including email, first and last names and even have 
    the option to delete your account. 

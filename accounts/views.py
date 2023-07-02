@@ -8,14 +8,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from database import db
 from util import mail
 from .models import User
-from .forms import LoginForm, UserForm
+from .forms import LoginForm, SignupForm
 
 accounts_bp = Blueprint("accounts", __name__)
 
 
 @accounts_bp.route("/create-new-account/", methods=["GET", "POST"])
 def sign_up():
-    form = UserForm()
+    form = SignupForm()
 
     if form.validate_on_submit():
         password = form.password.data
@@ -43,6 +43,7 @@ def log_in():
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             next_url = request.args.get("next")
+            
             if next_url:
                 return redirect(next_url)
 
@@ -63,10 +64,10 @@ def log_out():
     return redirect("/")
 
 
-@accounts_bp.route("/account-settings/", methods=["GET", "POST", "DELETE"])
+@accounts_bp.route("/manage/account-settings/", methods=["GET", "POST", "DELETE"])
 @login_required
 def account_settings():
-    form = UserForm()
+    form = SignupForm()
 
     if request.method == "POST":
         current_user.email_address = form.email_address.data
@@ -74,7 +75,7 @@ def account_settings():
         current_user.last_name = form.last_name.data
         db.session.commit()
         response = make_response()
-        response.headers["HX-Location"] = "/account-settings"
+        response.headers.add("HX-Location", "/manage/account-settings")
         flash("Update was successful", "success")
         return response
 
@@ -87,7 +88,7 @@ def account_settings():
         db.session.delete(current_user)
         db.session.commit()
         response = make_response()
-        response.headers["HX-Redirect"] = "/"
+        response.headers.add("HX-Redirect", "/")
         return response
 
     return render_template("settings.html", form=form)
@@ -99,6 +100,7 @@ def forgot_password():
     if request.method == "POST":
         email = request.form.get("email")
         email_exists = User.query.filter_by(email_address=email).first()
+        
         if not email_exists:
             flash("This email is not registered in our system", "error")
 

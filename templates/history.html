@@ -2,11 +2,14 @@
 
 {% block main %}
   <div class="m-auto">
-    <div class="text-left history">
+    <div class="history">
       <h4>Your TRMMR History</h4>
       {% for url in urls %}
         <div class="my-5 py-3">
-          <b>TRMMD:</b> <a href="{{ url.short_url }}">{{ url.short_url }}</a><br>
+          <b>TRMMD:</b> <a href="{{ url.short_url }}" class="d-inline">{{ url.short_url }}</a>
+          <button hx-post="/url/delete/{{ url.unique_id }}" class="w-auto delete p-1">
+            <img src="static/images/delete-button.svg" alt="Delete" height="15" width="15">
+          </button><br>
           <b>Original URL:</b> <a href="{{ url.org_url }}" class="justlink">{{ url.org_url[0:50] }}...</a><br>
           <b>Date Created:</b> <span class="text-muted">{{ url.created_at }}</span><br>
           <a class="m-1 p-1 float-end" href="{{ url_for('url.url_analytics', unique_id=url.unique_id) }}">

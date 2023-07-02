@@ -4,7 +4,7 @@
   <div>
     <div class="text-center mx-5">
       <h4>QR Codes</h4>
-      <form action="" hx-post="/generate-qrcode" hx-target="#foo" method="post" class="form-control m-4">
+      <form action="" hx-post="/qrcodes/generate" hx-target="#foo" method="post" class="form-control m-4">
           <input type="text" name="url" id="URLInput" class="d-inline" required placeholder="Enter URL" size="60">
         <button class="icon" onclick="pasteFromClipboard()">
           <img src="/static/images/paste-preview.png" alt="" height="20" width="20">

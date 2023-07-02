@@ -21,14 +21,12 @@ def shorten_url():
     context = {"current_user": current_user, "cached": cached}
     
     if current_user.is_authenticated:
-        last_shortened_url = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).first()
+        last_shortened_url = ShortenedURL.get_user_recent_urls(current_user.id).first()
         context["last_shortened_url"] = last_shortened_url
-            
 
     if request.method == "POST":
         long_url = request.form.get("long_url")
         custom_url = request.form.get("custom_half")
-        short_url = None
 
         if current_user.is_authenticated:
             user_id = current_user.id
@@ -52,20 +50,18 @@ def shorten_url():
                 db.session.commit()
         
         else:
-            short_link = short_url = generate_short_url(custom_url=custom_url) if custom_url else generate_short_url()
-            cache.set("short_link", short_link, timeout=60)
+            short_url = generate_short_url(custom_url=custom_url) if custom_url else generate_short_url()
         
         context["short_url"] = short_url
 
     return render_template("home.html", **context)
 
 
-@url_bp.route("/<unique_id>/set/url-password", methods=["POST"])
+@url_bp.route("/set/url-password/<unique_id>", methods=["POST"])
 def set_url_password(unique_id):
+    new_password = request.form.get("url_password")
     short_url = request.host_url + unique_id
     url = ShortenedURL.query.filter_by(short_url=short_url).first()
-
-    new_password = request.form.get("url_password")
     url.password = generate_password_hash(new_password)
     db.session.commit()
     flash("URL is now secured", "success")
@@ -82,11 +78,11 @@ def redirect_to_org_url(unique_id):
         flash("This URL is password protected. Enter password to gain access.")
         return render_template("password.html", unique_id=url.unique_id)
 
-    Click.update_click_record(url, request)
+    Click().record_click(url, request)
     return redirect(url.org_url)
 
 
-@url_bp.route("/<unique_id>/authenticate", methods=["GET", "POST"])
+@url_bp.route("/authenticate/url/<unique_id>", methods=["GET", "POST"])
 def check_url_password(unique_id):
     short_url = request.host_url + unique_id
     url = ShortenedURL.query.filter_by(short_url=short_url).first_or_404()
@@ -95,14 +91,14 @@ def check_url_password(unique_id):
         password = request.form.get("password")
 
         if password and check_password_hash(url.password, password):
-            Click.update_click_record(url, request)
+            Click().record_click(url, request)
             return redirect(url.org_url)
 
         flash("The password you entered is invalid", "error")
     return render_template("password.html", unique_id=url.unique_id)
 
 
-@url_bp.route("/generate-qrcode", methods=["GET", "POST"])
+@url_bp.route("/qrcodes/generate", methods=["GET", "POST"])
 @login_required
 def generate_qrcode():
     if request.method == "POST":
@@ -140,7 +136,7 @@ def generate_qrcode():
 @cache.cached(timeout=30)
 @login_required
 def user_history():
-    user_urls = ShortenedURL.query.filter_by(user_id=current_user.id).order_by(ShortenedURL.created_at.desc()).all()
+    user_urls = ShortenedURL.get_user_recent_urls(current_user.id).all()
 
     # Clear URL history
     if request.method == "POST":
@@ -155,7 +151,18 @@ def user_history():
     return render_template("history.html", **context)
 
 
-@url_bp.route("/analytics/<unique_id>", methods=["GET"])
+@url_bp.route("/delete/url/<unique_id>", methods=["POST"])
+@login_required
+def delete_shortened_url(unique_id):
+    url = ShortenedURL.query.filter_by(user_id=current_user.id, unique_id=unique_id).first()
+    db.session.delete(url)
+    db.session.commit()
+    response = make_response()
+    response.headers.add("HX-Refresh", "true")
+    return response  
+
+
+@url_bp.route("/analytics/url/<unique_id>", methods=["GET"])
 @login_required
 def url_analytics(unique_id):
     short_url = request.host_url + unique_id
@@ -190,25 +197,20 @@ def url_analytics(unique_id):
         graph1 = base64.b64encode(buffer1.getvalue()).decode()
 
         # Bar chart for clicks per day
-        target_dates = set()
-        for click in url.clicks:
-            target_dates.add(click.clicked_at)
-
-        clicks = Click.query.filter_by(link_id=url.id)
-        click_count = {}
+        target_dates = [click.clicked_at for click in url.clicks]
+        dates_count = {}
 
         for date in target_dates:
-            click_day = clicks.filter_by(clicked_at=date).all()
-            try:
-                click_count[date] += len(click_day)
-            except KeyError:
-                click_count[date] = len(click_day)
+            if date in dates_count:
+                dates_count[date] += 1
+            else:
+                dates_count[date] = 1
 
-        dates = [str(date) for date in click_count.keys()]
-        values = [value for value in click_count.values()]
+        date_labels = [str(date) for date in dates_count.keys()]
+        values = [value for value in dates_count.values()]
 
         plt.figure()
-        plt.bar(x=dates, height=values, width=0.2, color="lime")
+        plt.bar(x=date_labels, height=values, width=0.2, color="lime")
         plt.xlabel("Date", fontsize=12)
         plt.xticks(rotation=30)
         plt.ylabel("Clicks", fontsize=12)
@@ -219,6 +221,12 @@ def url_analytics(unique_id):
         plt.savefig(buffer2, format="png")
         buffer2.seek(0)
         graph2 = base64.b64encode(buffer2.getvalue()).decode()
+        
+        # Get the day with most clicks
+        zipped = zip(date_labels, values)
+        max_clicks_day = list(max(dict(zipped).items(), key=lambda x: x[1]))
+        new_format = datetime.strptime(max_clicks_day[0], "%Y-%m-%d")
+        max_clicks_day[0] = new_format.strftime("%b %d, %Y")
         
         # Create a bar chart for browsers
         browsers = [click.browser for click in url.clicks]
@@ -246,19 +254,11 @@ def url_analytics(unique_id):
         plt.savefig(buffer3, format="png")
         buffer3.seek(0)
         graph3 = base64.b64encode(buffer3.getvalue()).decode()
-        
-
-        # Get the day with most clicks
-        zipped = zip(dates, values)
-        max_clicks_day = list(max(dict(zipped).items(), key=lambda x: x[1]))
-        new_format = datetime.strptime(max_clicks_day[0], "%Y-%m-%d")
-        max_clicks_day[0] = new_format.strftime("%b %d, %Y")
 
         context.update({
             "platform_chart": graph1,
             "click_chart": graph2,
             "browser_chart": graph3,
-            "click_count": click_count,
             "max_clicks_day": max_clicks_day,
             "most_used_browser": most_used_browser
         })

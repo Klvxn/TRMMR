@@ -5,7 +5,7 @@ from wtforms.validators import Email, DataRequired, ValidationError, Length
 from .models import User
 
 
-class UserForm(FlaskForm):
+class SignupForm(FlaskForm):
     first_name = StringField(validators=[DataRequired()])
     last_name = StringField(validators=[DataRequired()])
     email_address = EmailField(validators=[DataRequired(), Email()])
@@ -15,6 +15,12 @@ class UserForm(FlaskForm):
         email_exists = User.get_user_by_email(field.data)
         if email_exists:
             raise ValidationError("User with this email address already exists")
+
+    def validate_password(self, field):
+        basic_words = ["qwertyuiop", "password", "123456789", "security", "computer"]
+
+        if field.data.lower() in basic_words:
+            raise ValidationError("Enter a strong password.")
 
 
 class LoginForm(FlaskForm):

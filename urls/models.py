@@ -31,6 +31,10 @@ class ShortenedURL(db.Model):
     def get_total_clicks(self):
         return len(self.clicks)
 
+    @classmethod
+    def get_user_recent_urls(cls, user_id):
+       return cls.query.filter_by(user_id=user_id).order_by(cls.created_at.desc())       
+
 
 class Click(db.Model):
 
@@ -49,20 +53,13 @@ class Click(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    @staticmethod
-    def update_click_record(url, request):
-        print("updating...")
+    def record_click(self, url, request):
         url.last_visited = datetime.now()
         ua_string = request.headers.get("User-Agent")
         user_agent = parse(ua_string)
-        device = user_agent.os.family
-        browser = user_agent.browser.family
-        clicked_at = datetime.now()
-        click = Click(
-            clicked_at=clicked_at,
-            browser=browser,
-            device=device,
-            link_id=url.id
-        )
-        click.save()
+        self.device = user_agent.os.family
+        self.browser = user_agent.browser.family
+        self.clicked_at = datetime.now()
+        self.link_id = url.id
+        self.save()
         return

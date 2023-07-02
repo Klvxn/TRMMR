@@ -141,13 +141,16 @@ code {
 }
 
 .flash-msg, .form-error {
-  background-color: lightcoral;
   color: white;
   font-family: 'Space Grotesk', sans-serif;
   width: fit-content;
   padding: .3rem .5rem;
   text-align: center;
   margin: 1rem auto;
+}
+
+.form-error {
+  background-color: lightcoral;
 }
 
 .circle {
@@ -166,7 +169,7 @@ code {
 }
 
 .history, .analytics {
-  font-family: 'Space Grotesk', sans-serif
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .justlink {
@@ -175,9 +178,8 @@ code {
 }
 
 .last-short {
-  margin-top: 10rem;
+  margin-top: 5rem;
   text-align: center;
-  /*border: 1px lightgray solid;*/
 }
 
 #pwd-container, #pwd-form {
@@ -192,4 +194,17 @@ code {
   border-radius: 10rem;
   font-size: small;
   font-weight: bold;
+}
+
+.delete {
+  border: 1px lightcoral solid;
+  margin-left: 10rem;
+  outline: none;
+  display: inline;
+}
+
+.delete:hover, .delete:active {
+  background-color: lightcoral;
+  fill: green;
+
 }
