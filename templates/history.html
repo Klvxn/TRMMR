@@ -1,22 +1,24 @@
 {% extends 'home.html' %}
 
 {% block main %}
-  <div class="m-auto">
-    <div class="text-left history">
+  <div class="main-content d-flex align-items-center">
+    <div class="text-left history mx-4">
       <h4>Your TRMMR History</h4>
       {% for url in urls %}
-        <div class="my-5 py-3">
+        <div class="mt-5 pt-3">
           <b>TRMMD:</b> <a href="{{ url.short_url }}">{{ url.short_url }}</a><br>
           <b>Original URL:</b> <a href="{{ url.org_url }}" class="justlink">{{ url.org_url[0:50] }}...</a><br>
           <b>Date Created:</b> <span class="text-muted">{{ url.created_at }}</span><br>
-          <a class="m-1 p-1 float-end" href="{{ url_for('url.url_analytics', unique_id=url.unique_id) }}">
-            View analytics ->
-          </a>
+          <div class="xx">
+            <a class="m-1 p-1" href="{{ url_for('url.url_analytics', unique_id=url.unique_id) }}">
+              <button class="analytics-button">View analytics -></button>
+            </a>
+          </div>
         </div>
       {% endfor %}
       {% if urls %}
-        <form action="" class="my-5" method="post">
-          <button type="submit">Clear history</button>
+        <form action="" class="my-2" method="post">
+          <button class="main-button" type="submit">Clear history</button>
         </form>
       {% endif %}
     </div>

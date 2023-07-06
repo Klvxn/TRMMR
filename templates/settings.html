@@ -5,18 +5,18 @@
     <h4>Account Settings</h4>
     <form action="" hx-post="/account-settings" method="post">
       {{ form.csrf_token }}
-      {{ form.email_address(placeholder="Email address", value=current_user.email_address) }} <br>
+      {{ form.email_address(class="settings-input", placeholder="Email address", value=current_user.email_address) }} <br>
       {% if form.email_address.errors %}
         {% for error in form.email_address.errors %}
           <p class="form-error">{{ error }} </p>
         {% endfor %}
       {% endif %}
-      {{ form.first_name(placeholder="First Name", value=current_user.first_name) }} <br>
-      {{ form.last_name(placeholder="Last Name", value=current_user.last_name)}} <br>
-      <button type="submit">Update</button>
+      {{ form.first_name(class="settings-input", placeholder="First Name", value=current_user.first_name) }} <br>
+      {{ form.last_name(class="settings-input", placeholder="Last Name", value=current_user.last_name)}} <br>
+      <button class="update-btn" type="submit">Update</button>
     </form>
-    <hr>
-    <button class="btn btn-outline-danger outline-0" hx-confirm="Do you want to delete your TRMMR account?" hx-delete=".">
+    <hr class="hr">
+    <button class="delete-btn" hx-confirm="Do you want to delete your TRMMR account?" hx-delete=".">
       Delete account</button>
   </div>
 {% endblock %}

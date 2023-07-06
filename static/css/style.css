@@ -129,7 +129,8 @@ input::placeholder {
 }
 
 .main-button:hover {
-  background: #9f0c27;
+  /* background: #9f0c27; */
+  background: #dd7833;
 }
 
 input {
@@ -152,16 +153,83 @@ input::placeholder {
   color: lightgray;
 }
 
-div.auth-form form, .user-form form {
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  /* width: 50%; */
+  height: 30rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-form form {
+  width: 50%;
+}
+
+.auth-form form > div {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.forgot-pass {
+  display: flex;
+  justify-content: end;
+  margin: .5rem .5rem 0 0;
+  font-size: .8rem;
+  text-decoration: none;
+}
+
+.forgot-pass:hover {
+  text-decoration: underline;
+}
+
+.create-account {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .3rem;
+  font-size: .8rem;
+  margin: 1.5rem 0 0 0;
+}
+
+.create-account a {
+  text-decoration: none;
+  padding-top: .1rem;
+}
+
+.create-account a:hover {
+  text-decoration: underline;
+}
+
+.user-form form {
   margin: 0 auto;
   text-align: center;
   width: 100%;
 }
 
-div.auth-form form input {
-  width: 30%;
+.auth-form input {
+  width: 100%;
   text-align: center;
   margin: 0 auto;
+  border-radius: 5rem;
+}
+
+.forgot_pass-btn {
+  width: 100%;
+  height: 2.8rem;
+  margin-top: 1rem;
+  border-radius: 5rem;
+  border: none;
+  outline: none;
+  background: #e9ecef;
+  font-family: 'Raleway';
+  font-weight: 600;
+  transition: all ease-in-out .2s;
+}
+
+.forgot_pass-btn:hover {
+  /* border: 1px solid #d3d3d3; */
+  background: #d0d0d7;
 }
 
 form hr {
@@ -177,7 +245,6 @@ ul, li a {
 
 form button {
   width: 30%;
-  margin-top: 0 !important;
 }
 
 code {
@@ -277,10 +344,6 @@ code {
   margin: 3rem 0;
 }
 
-.history, .analytics {
-  /* font-family: 'Space Grotesk', sans-serif */
-}
-
 .justlink {
   /* font-family: 'Space Grotesk', sans-serif; */
   font-weight: normal;
@@ -295,4 +358,96 @@ code {
 #pwd-container, #pwd-form {
   margin: 3rem auto;
   text-align: center;
+}
+
+/* History */
+.xx {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2.5rem;
+}
+
+.xx a {
+  text-decoration: none;
+}
+
+.analytics-button {
+  width: 12rem;
+  margin: 0 auto;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #e9e9ed;
+  border: none;
+  padding: .5rem 1rem;
+  font-weight: bold;
+  font-family: 'Raleway';
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  transition: all ease-in-out .2s;
+}
+
+.analytics-button:hover {
+  background: #d0d0d7;
+}
+
+/* Account settings */
+.settings-input {
+  border-radius: 5rem;
+  border: none;
+  outline: none;
+  background: #e9e9ed;
+  padding: 0 1rem;
+  width: 30rem;
+  height: 2.8rem;
+}
+
+.update-btn {
+  width: 50%;
+  height: 2.8rem;
+  margin: 0 auto;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #e9e9ed;
+  border: none;
+  padding: .5rem 1rem;
+  font-weight: bold;
+  font-family: 'Raleway';
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  transition: all ease-in-out .2s;
+}
+
+.update-btn:hover {
+  background: #d0d0d7;
+}
+
+.hr {
+  margin: 2rem auto 1rem auto;
+}
+
+.delete-btn {
+  width: 12rem;
+  height: 2.8rem;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #fff;
+  border: 1px solid #dc3545;
+  /* padding: .5rem 1rem; */
+  font-weight: bold;
+  font-family: 'Raleway';
+  color: #333;
+  transition: all ease-in-out .2s;
+}
+
+.delete-btn:hover {
+  background: #dc3545;
+  color: #fff;
 }
