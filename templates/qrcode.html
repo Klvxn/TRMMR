@@ -5,7 +5,7 @@
     <div class="mx-5">
       <h4>QR Codes</h4>
       <form action="" hx-post="/generate-qrcode" hx-target="#foo" method="post" class="form-control m-4 py-4">
-          <div class="form-main QR-form d-flex justify-center gap-2">
+          <div class="form-main QR-form d-flex justify-content-center gap-2">
             <input type="text" name="url" id="URLInput" class="d-inline" required placeholder="Enter URL">
             <button class="icon" onclick="pasteFromClipboard()">
               <img src="/static/images/paste-preview.png" alt="" height="20" width="20">
@@ -16,7 +16,7 @@
           </div>
         <button type="submit" class="mt-4 main-button">Generate</button>
       </form>
-      <div id="foo" class="my-3"></div>
+      <div id="foo" class="my-3 mx-4"></div>
     </div>
   </div>
 {% endblock %}

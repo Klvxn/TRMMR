@@ -1,27 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="auth-form">
+  <div class="auth-form pt-5">
     <h4 class="text-center my-5">Create a New Account</h4>
     <form action="" method="post">
-      {{ form.csrf_token }}
-      {{ form.email_address(placeholder="Email address") }} <br>
-      {% if form.email_address.errors %}
-        {% for error in form.email_address.errors %}
-          <p class="form-error">{{ error }} </p>
-        {% endfor %}
-      {% endif %}
-      {{ form.first_name(placeholder="First Name") }} <br>
-      {{ form.last_name(placeholder="Last Name") }} <br>
-      {{ form.password(placeholder="Password") }} <br>
-      {% if form.password.errors %}
-        {% for error in form.email_address.errors %}
-          <p class="form-error">{{ error }} </p>
-        {% endfor %}
-      {% endif %}
-      <button>Sign Up</button>
-      <hr>
-      Already have an account? <a href="/log-in/">Log In</a>
+      <div>
+        {{ form.csrf_token }}
+        {{ form.email_address(placeholder="Email address") }} <br>
+        {% if form.email_address.errors %}
+          {% for error in form.email_address.errors %}
+            <p class="form-error">{{ error }} </p>
+          {% endfor %}
+        {% endif %}
+        {{ form.first_name(placeholder="First Name") }} <br>
+        {{ form.last_name(placeholder="Last Name") }} <br>
+        {{ form.password(placeholder="Password") }} <br>
+        {% if form.password.errors %}
+          {% for error in form.email_address.errors %}
+            <p class="form-error">{{ error }} </p>
+          {% endfor %}
+        {% endif %}
+        <button class="form-btn mt-0">Sign Up</button>
+        <div class="login-account">
+          <p class="mb-0">Already have an account?</p> <a href="/log-in/">Log In</a>
+        </div>
+      </div>
     </form>
   </div>
 {% endblock %}

@@ -183,7 +183,8 @@ input::placeholder {
   text-decoration: underline;
 }
 
-.create-account {
+.create-account,
+.login-account {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -192,12 +193,14 @@ input::placeholder {
   margin: 1.5rem 0 0 0;
 }
 
-.create-account a {
+.create-account a,
+.login-account a {
   text-decoration: none;
   padding-top: .1rem;
 }
 
-.create-account a:hover {
+.create-account a:hover,
+.login-account a:hover {
   text-decoration: underline;
 }
 
@@ -212,9 +215,15 @@ input::placeholder {
   text-align: center;
   margin: 0 auto;
   border-radius: 5rem;
+  background: #fffcc8;
 }
 
-.forgot_pass-btn {
+.auth-form input::placeholder {
+  color: #000;
+  font-weight: 600;
+}
+
+.form-btn {
   width: 100%;
   height: 2.8rem;
   margin-top: 1rem;
@@ -227,7 +236,7 @@ input::placeholder {
   transition: all ease-in-out .2s;
 }
 
-.forgot_pass-btn:hover {
+.form-btn:hover {
   /* border: 1px solid #d3d3d3; */
   background: #d0d0d7;
 }
@@ -254,9 +263,15 @@ code {
   border: lightgray 1px solid;
 }
 
+.code {
+  border-radius: 5rem;
+  padding: .7rem .5rem;
+}
+
 .copy-btn {
   width: auto;
   border: 1px cadetblue solid;
+  border-radius: 50%;
 }
 
 .user-form {
@@ -356,7 +371,7 @@ code {
 }
 
 #pwd-container, #pwd-form {
-  margin: 3rem auto;
+  margin: 1rem auto;
   text-align: center;
 }
 
@@ -450,4 +465,12 @@ code {
 .delete-btn:hover {
   background: #dc3545;
   color: #fff;
+}
+
+/* QR code */
+
+#foo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

@@ -99,10 +99,12 @@ def generate_qrcode():
         url_arg = request.args.get("url")
 
         html_resp = """
-            <p><img src="data:image/png;base64,{}" alt="QR CODE" height=330 width=330></p>
-            <form action="/generate-qrcode" method="post">
-                <button>Download</button>
-            </form>
+            <div class="qr-container">
+                <p class="qr-image"><img src="data:image/png;base64,{}" alt="QR CODE" height=330 width=330></p>
+                <form action="/generate-qrcode" method="post">
+                    <button class="form-btn">Download</button>
+                </form>
+            </div>
         """
 
         if url_arg:
