@@ -24,7 +24,6 @@ def sign_up():
         email_address = form.email_address.data
         user = User(first_name, last_name, email_address, password)
         user.save_to_db()
-        login_user(user)
         flash("Registration was successful", "success")
         return redirect("/log-in/")
 

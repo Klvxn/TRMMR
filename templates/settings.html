@@ -3,7 +3,7 @@
 {% block main %}
   <div class="user-form">
     <h4>Account Settings</h4>
-    <form action="" hx-post="/account-settings" method="post">
+    <form action="" hx-post="/manage/account-settings" method="post">
       {{ form.csrf_token }}
       {{ form.email_address(placeholder="Email address", value=current_user.email_address) }} <br>
       {% if form.email_address.errors %}

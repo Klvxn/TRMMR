@@ -1,7 +1,8 @@
 from datetime import datetime
-from database import db
 
 from user_agents import parse
+
+from database import db
 
 
 class ShortenedURL(db.Model):
@@ -17,7 +18,7 @@ class ShortenedURL(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
     last_visited = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    clicks = db.relationship("Click", backref="url_clicks",  lazy=True)
+    clicks = db.relationship("Click", backref="url_clicks", lazy=True)
 
     def __init__(self, **kwargs):
         self.unique_id = kwargs["short_url"].split("/")[-1]
@@ -33,7 +34,7 @@ class ShortenedURL(db.Model):
 
     @classmethod
     def get_user_recent_urls(cls, user_id):
-       return cls.query.filter_by(user_id=user_id).order_by(cls.created_at.desc())       
+        return cls.query.filter_by(user_id=user_id).order_by(cls.created_at.desc())
 
 
 class Click(db.Model):

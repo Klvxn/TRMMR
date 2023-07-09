@@ -17,8 +17,7 @@ url_bp = Blueprint("url", __name__)
 @url_bp.route("/", methods=["GET", "POST"])
 @limiter.limit("20/minute")
 def shorten_url():
-    cached = cache.get("short_link")
-    context = {"current_user": current_user, "cached": cached}
+    context = {"current_user": current_user}
     
     if current_user.is_authenticated:
         last_shortened_url = ShortenedURL.get_user_recent_urls(current_user.id).first()
@@ -78,7 +77,6 @@ def set_url_password(unique_id):
 
 
 @url_bp.route("/<unique_id>", methods=["GET"])
-@cache.cached(timeout=50)
 @limiter.limit("20/minute")
 def redirect_to_org_url(unique_id):
     short_url = request.host_url + unique_id
@@ -108,8 +106,7 @@ def check_url_password(unique_id):
     return render_template("password.html", unique_id=url.unique_id)
 
 
-@url_bp.route("/qrcodes/generate", methods=["GET", "POST"])
-@cache.cached(timeout=50)
+@url_bp.route("/qrcodes/generate/", methods=["GET", "POST"])
 @login_required
 def generate_qrcode():
     if request.method == "POST":
@@ -118,7 +115,7 @@ def generate_qrcode():
 
         html_resp = """
             <p><img src="data:image/png;base64,{}" alt="QR CODE" height=330 width=330></p>
-            <form action="/generate-qrcode" method="post">
+            <form action="" method="post">
                 <button>Download</button>
             </form>
         """
