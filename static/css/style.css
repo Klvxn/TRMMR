@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Aboreto&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 body {
   margin: 0;
@@ -7,7 +8,7 @@ body {
 }
 
 h4, a {
-  font-family: 'Aboreto', cursive;
+  font-family: 'Raleway', cursive;
   font-weight: bold;
 }
 
@@ -16,16 +17,120 @@ h4 {
   text-align: center !important;
 }
 
-aside {
-  width: 20%;
-  border-right: 1px lightgray solid;
-  height: 100%;
-  float: left;
+.navbar-nav {
+  font-family: 'Raleway';
+  font-weight: 600;
 }
 
-form div {
+aside {
+  width: 20%;
+  height: 30rem;
+  display: flex;
+  align-items: center;
+}
+
+.aside-container {
+  width: 100%;
+}
+
+.aside--items {
+  width: 12rem;
+  margin: 1rem 0;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  border-radius: 5rem;
+  transition: all ease-in-out .2s;
+  color: #000;
+}
+
+.aside--items:hover {
+  background: #e9ecef;
+}
+
+.aside--button {
+  width: 12rem;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #ec5d60;
+}
+
+.aside--button button {
+  width: 100%;
+  text-align: left;
+  padding: .5rem 1rem;
+  font-weight: bold;
+  font-family: 'Raleway';
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #efefef;
+}
+
+.aside--items--login,
+.aside--items--signup {
+  width: 12rem;
+  margin: 1rem 0;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  border-radius: 5rem;
+  transition: all ease-in-out .2s;
+  background: #ec5d60;
+  color: #efefef;
+}
+
+.aside-container a {
+  text-decoration: none;
+}
+
+.main-content {
+  margin: 2rem 4rem;
+}
+
+.main-content h4 {
+  font-family: 'Raleway';
+  font-weight: 500;
+}
+
+.main-form {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+}
+
+#custom_url {
+  width: 100%;
+  border-radius: 5rem;
+  border: none;
+  background: #e9e9ed;
+  padding: 0 1rem;
+}
+
+input::placeholder {
+  color: #333 !important;
+}
+
+.main-button {
+  width: 12rem;
   margin: 0 auto;
-  width: fit-content;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #ec5d60;
+  border: none;
+  padding: .5rem 1rem;
+  font-weight: bold;
+  font-family: 'Raleway';
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #efefef;
+  transition: all ease-in-out .2s;
+}
+
+.main-button:hover {
+  /* background: #9f0c27; */
+  background: #dd7833;
 }
 
 input {
@@ -36,47 +141,104 @@ input {
   display: block;
   margin-bottom: 2rem;
   height: 2.8rem;
-  font-family: 'Space Grotesk', sans-serif !important;
+  /* font-family: 'Space Grotesk', sans-serif !important; */
 }
 
 input:focus {
   outline: gray 1px solid;
-  text-align: center;
+  /* text-align: center; */
 }
 
 input::placeholder {
   color: lightgray;
 }
 
-button, a.btn {
-  border: none;
-  outline: cadetblue 1px solid;
-  background-color: white;
-  color: cadetblue;
-  width: 10rem;
-  text-transform: uppercase !important;
-  text-align: center;
-  padding: 5px;
-  border-radius: 5px !important;
-  margin-top: 2rem !important;
-  font-family: 'Space Grotesk', sans-serif !important;
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  /* width: 50%; */
+  height: 30rem;
+  align-items: center;
+  justify-content: center;
 }
 
-button:active, button:hover {
-  background-color: cadetblue;
-  color: white;
+.auth-form form {
+  width: 50%;
 }
 
-div.auth-form form, .user-form form {
+.auth-form form > div {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.forgot-pass {
+  display: flex;
+  justify-content: end;
+  margin: .5rem .5rem 0 0;
+  font-size: .8rem;
+  text-decoration: none;
+}
+
+.forgot-pass:hover {
+  text-decoration: underline;
+}
+
+.create-account,
+.login-account {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .3rem;
+  font-size: .8rem;
+  margin: 1.5rem 0 0 0;
+}
+
+.create-account a,
+.login-account a {
+  text-decoration: none;
+  padding-top: .1rem;
+}
+
+.create-account a:hover,
+.login-account a:hover {
+  text-decoration: underline;
+}
+
+.user-form form {
   margin: 0 auto;
   text-align: center;
   width: 100%;
 }
 
-div.auth-form form input {
-  width: 30%;
+.auth-form input {
+  width: 100%;
   text-align: center;
   margin: 0 auto;
+  border-radius: 5rem;
+  background: #fffcc8;
+}
+
+.auth-form input::placeholder {
+  color: #000;
+  font-weight: 600;
+}
+
+.form-btn {
+  width: 100%;
+  height: 2.8rem;
+  margin-top: 1rem;
+  border-radius: 5rem;
+  border: none;
+  outline: none;
+  background: #e9ecef;
+  font-family: 'Raleway';
+  font-weight: 600;
+  transition: all ease-in-out .2s;
+}
+
+.form-btn:hover {
+  /* border: 1px solid #d3d3d3; */
+  background: #d0d0d7;
 }
 
 form hr {
@@ -92,7 +254,6 @@ ul, li a {
 
 form button {
   width: 30%;
-  margin-top: 0 !important;
 }
 
 code {
@@ -102,9 +263,15 @@ code {
   border: lightgray 1px solid;
 }
 
+.code {
+  border-radius: 5rem;
+  padding: .7rem .5rem;
+}
+
 .copy-btn {
   width: auto;
   border: 1px cadetblue solid;
+  border-radius: 50%;
 }
 
 .user-form {
@@ -120,10 +287,34 @@ code {
 }
 
 .icon {
-  width: auto;
+  /* width: auto; */
   outline: none;
-  border: cadetblue 1px solid;
-  padding: .68rem;
+  border: none;
+  /* padding: .68rem; */
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all ease-in-out .2s;
+}
+
+.clear {
+  background: #ec5d60;
+}
+
+.clear:hover {
+  background: #dd7833;
+}
+
+.form-main input {
+  border-radius: 5rem;
+  border: none;
+  /* outline: none; */
+  background: #e9e9ed;
+  padding: 0 1rem;
+  width: 30rem;
 }
 
 #feedback {
@@ -140,11 +331,15 @@ code {
   z-index: 9999;
 }
 
-.flash-msg, .form-error {
+.flash-msg,
+.form-error {
+  background-color: lightcoral;
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Raleway';
+  font-weight: 500;
   width: fit-content;
-  padding: .3rem .5rem;
+  padding: .8rem 1.5rem;
+  border-radius: .5rem;
   text-align: center;
   margin: 1rem auto;
 }
@@ -168,43 +363,143 @@ code {
   margin: 3rem 0;
 }
 
-.history, .analytics {
-  font-family: 'Space Grotesk', sans-serif;
-}
+/*.history, .analytics {*/
+/*  font-family: 'Space Grotesk', sans-serif;*/
+/*}*/
 
 .justlink {
-  font-family: 'Space Grotesk', sans-serif;
+  /* font-family: 'Space Grotesk', sans-serif; */
   font-weight: normal;
 }
 
 .last-short {
-  margin-top: 5rem;
+  margin-top: 10rem;
   text-align: center;
+  /*border: 1px lightgray solid;*/
 }
 
 #pwd-container, #pwd-form {
-  margin: 3rem auto;
+  margin: 1rem auto;
   text-align: center;
 }
 
-.bubble {
-  padding: .5rem;
-  background-color: cadetblue;
-  color: white;
-  border-radius: 10rem;
-  font-size: small;
+/* History */
+.xx {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2.5rem;
+}
+
+.xx a {
+  text-decoration: none;
+}
+
+.analytics-button {
+  width: 12rem;
+  margin: 0 auto;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #e9e9ed;
+  border: none;
+  padding: .5rem 1rem;
   font-weight: bold;
-}
-
-.delete {
-  border: 1px lightcoral solid;
-  margin-left: 10rem;
+  font-family: 'Raleway';
+  border: none;
   outline: none;
-  display: inline;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  transition: all ease-in-out .2s;
 }
 
-.delete:hover, .delete:active {
-  background-color: lightcoral;
-  fill: green;
-
+.analytics-button:hover {
+  background: #d0d0d7;
 }
+
+/* Account settings */
+.settings-input {
+  border-radius: 5rem;
+  border: none;
+  outline: none;
+  background: #e9e9ed;
+  padding: 0 1rem;
+  width: 30rem;
+  height: 2.8rem;
+}
+
+.update-btn {
+  width: 50%;
+  height: 2.8rem;
+  margin: 0 auto;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #e9e9ed;
+  border: none;
+  padding: .5rem 1rem;
+  font-weight: bold;
+  font-family: 'Raleway';
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  transition: all ease-in-out .2s;
+}
+
+.update-btn:hover {
+  background: #d0d0d7;
+}
+
+.hr {
+  margin: 2rem auto 1rem auto;
+}
+
+.delete-btn {
+  width: 12rem;
+  height: 2.8rem;
+  cursor: pointer;
+  border-radius: 5rem;
+  background: #fff;
+  border: 1px solid #dc3545;
+  /* padding: .5rem 1rem; */
+  font-weight: bold;
+  font-family: 'Raleway';
+  color: #333;
+  transition: all ease-in-out .2s;
+}
+
+.delete-btn:hover {
+  background: #dc3545;
+  color: #fff;
+}
+
+/* QR code */
+
+#foo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+/*.bubble {*/
+/*  padding: .5rem;*/
+/*  background-color: cadetblue;*/
+/*  color: white;*/
+/*  border-radius: 10rem;*/
+/*  font-size: small;*/
+/*  font-weight: bold;*/
+/*}*/
+
+/*.delete {*/
+/*  border: 1px lightcoral solid;*/
+/*  margin-left: 10rem;*/
+/*  outline: none;*/
+/*  display: inline;*/
+/*}*/
+
+/*.delete:hover, .delete:active {*/
+/*  background-color: lightcoral;*/
+/*  fill: green;*/
+
+/*}*/
