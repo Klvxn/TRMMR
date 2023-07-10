@@ -25,20 +25,20 @@
           </div>
         </a>
 
-        <a href="/generate-qrcode">
+        <a href={{ url_for("url.generate_qrcode") }}>
           <div class="aside--items">
             QR Codes
           </div>
         </a>
 
-        <a href="/history">
+        <a href={{ url_for("url.user_history") }}>
           <div class="aside--items">
             History
           </div>
         </a>
 
         {% if current_user.is_authenticated %}
-          <a href="/account-settings">
+          <a href={{ url_for("accounts.account_settings") }}>
             <div class="aside--items">
               Account Settings
             </div>
@@ -46,18 +46,18 @@
         {% endif %}
 
         {% if current_user.is_authenticated %}
-          <form class="aside--button" action="/log-out" method="post">
+          <form class="aside--button" action="{{ url_for("accounts.log_out") }}" method="post">
             <button class="">Log Out</button>
           </form>
         {% else %}
 
-          <a class="" href="/log-in">
+          <a class="" href={{ url_for("accounts.log_in") }}>
             <div class="aside--items--login">
               Log In
             </div>
           </a>
 
-          <a class="" href="/create-new-account">
+          <a class="" href={{ url_for("accounts.sign_up") }}>
             <div class="aside--items--signup">
               Sign Up
             </div>

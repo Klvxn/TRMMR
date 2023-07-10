@@ -110,34 +110,33 @@ def check_url_password(unique_id):
 @login_required
 def generate_qrcode():
     if request.method == "POST":
-        url_form = request.form.get("url")
-        url_arg = request.args.get("url")
+        form_url = request.form.get("url")
+        arg_url = request.args.get("url")
 
         html_resp = """
             <p><img src="data:image/png;base64,{}" alt="QR CODE" height=330 width=330></p>
-            <form action="" method="post">
+            <form action="/download-qrcode?url={}" method="post">
                 <button>Download</button>
             </form>
         """
 
-        if url_arg:
-            encoded_image = encode_qrcode_image(url_arg)
-            html_resp = html_resp.format(encoded_image)
-            return make_response(html_resp)
-
-        if url_form:
-            encoded_image = encode_qrcode_image(url_form)
-            html_resp = html_resp.format(encoded_image)
-            return make_response(html_resp)
-
-        # Download QR code image
-        qr_code = qrcode.make(url_form)
-        image_stream = io.BytesIO()
-        qr_code.save(image_stream, "PNG")
-        image_stream.seek(0)
-        return send_file(image_stream, download_name="qr_code.png", as_attachment=True)
+        url = arg_url or form_url
+        encoded_image = encode_qrcode_image(url)
+        html_resp = html_resp.format(encoded_image, url)
+        return make_response(html_resp)
 
     return render_template("qrcode.html")
+
+
+@url_bp.route("/download-qrcode", methods=["GET", "POST"])
+@login_required
+def download_qrcode():
+    url = request.args.get("url")
+    qr_code = qrcode.make(url)
+    image_stream = io.BytesIO()
+    qr_code.save(image_stream, "PNG")
+    image_stream.seek(0)
+    return send_file(image_stream, download_name="qr_code.png", as_attachment=True)
 
 
 @url_bp.route("/history", methods=["GET", "POST"])

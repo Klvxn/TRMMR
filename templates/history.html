@@ -10,7 +10,7 @@
           <button hx-post="/url/delete/{{ url.unique_id }}" class="w-auto delete p-1">
             <img src="static/images/delete-button.svg" alt="Delete" height="15" width="15">
           </button><br>
-          <b>Original URL:</b> <a href="{{ url.org_url }}" class="justlink">{{ url.org_url[0:50] }}...</a><br>
+          <b>Original URL:</b> <a href="{{ url.org_url }}" class="justlink">{{ url.original_url[0:50] }}...</a><br>
           <b>Date Created:</b> <span class="text-muted">{{ url.created_at }}</span><br>
           <div class="xx">
             <a class="m-1 p-1" href="{{ url_for('url.url_analytics', unique_id=url.unique_id) }}">
